@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive robots.txt Explainer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        .interactive-line {
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            border-radius: 0.375rem;
+        }
+        .interactive-line:hover, .interactive-line.active {
+            background-color: #374151; /* bg-gray-700 */
+        }
+        .explanation-box {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .tab {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab.active {
+            color: #22d3ee; /* text-cyan-400 */
+            border-bottom-color: #22d3ee;
+        }
+        .tab:not(.active):hover {
+            background-color: #374151;
+            border-radius: 0.375rem;
+        }
+        .code-block {
+            display: none;
+        }
+        .code-block.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white p-4 sm:p-6 md:p-8">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-cyan-400">Understanding `robots.txt`</h1>
+            <p class="mt-2 text-lg text-gray-300">An interactive guide to the file that tells bots where they can and can't go.</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex flex-col md:flex-row gap-8">
+
+            <!-- Left Side: robots.txt example -->
+            <div class="md:w-1/2 bg-gray-800 p-6 rounded-xl shadow-lg">
+                <div class="flex justify-between items-center mb-4 border-b border-gray-700">
+                    <div id="tabs" class="flex">
+                        <div class="tab active" data-target="generic-example">Generic Example</div>
+                        <div class="tab" data-target="google-example">Google's Example</div>
+                    </div>
+                     <div class="flex items-center text-xs text-gray-400 pr-2">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Click a line to learn more
+                    </div>
+                </div>
+                <div id="code-container">
+                    <pre id="generic-example" class="code-font text-sm text-gray-300 p-4 bg-black bg-opacity-25 rounded-lg overflow-x-auto code-block active"><code id="robots-code-generic"><!-- This is a comment. It's ignored by crawlers but helpful for humans. -->
+<span id="line-ua-all" class="interactive-line p-1 block">User-agent: *</span>
+<span id="line-disallow-admin" class="interactive-line p-1 block">Disallow: /admin/</span>
+<span id="line-disallow-private" class="interactive-line p-1 block">Disallow: /private/</span>
+<span id="line-allow-public" class="interactive-line p-1 block">Allow: /public/</span>
+
+<span id="line-ua-google" class="interactive-line p-1 block">User-agent: Googlebot</span>
+<span id="line-disallow-search" class="interactive-line p-1 block">Disallow: /search</span>
+
+<span id="line-ua-bing" class="interactive-line p-1 block">User-agent: Bingbot</span>
+<span id="line-crawl-delay" class="interactive-line p-1 block">Crawl-delay: 10</span>
+
+<span id="line-sitemap" class="interactive-line p-1 block">Sitemap: https://www.example.com/sitemap.xml</span>
+</code></pre>
+                    <pre id="google-example" class="code-font text-sm text-gray-300 p-4 bg-black bg-opacity-25 rounded-lg overflow-x-auto code-block"><code id="robots-code-google"><span id="line-google-ua-all" class="interactive-line p-1 block">User-agent: *</span>
+<span id="line-google-disallow-search" class="interactive-line p-1 block">Disallow: /search</span>
+<span id="line-google-allow-search-about" class="interactive-line p-1 block">Allow: /search/about</span>
+<span id="line-google-allow-search-static" class="interactive-line p-1 block">Allow: /search/static</span>
+<span id="line-google-disallow-sdch" class="interactive-line p-1 block">Disallow: /sdch/</span>
+<span id="line-google-disallow-groups" class="interactive-line p-1 block">Disallow: /groups</span>
+<span id="line-google-disallow-images" class="interactive-line p-1 block">Disallow: /images</span>
+
+<span id="line-google-ua-adsbot" class="interactive-line p-1 block">User-agent: AdsBot-Google</span>
+<span id="line-google-disallow-none" class="interactive-line p-1 block">Disallow: </span>
+
+<span id="line-google-sitemap1" class="interactive-line p-1 block">Sitemap: https://www.google.com/sitemap.xml</span>
+<span id="line-google-sitemap2" class="interactive-line p-1 block">Sitemap: https://www.google.com/googlenews.sitemap.xml</span>
+</code></pre>
+                </div>
+            </div>
+
+            <!-- Right Side: Explanation -->
+            <div class="md:w-1/2">
+                <div id="explanation-box" class="bg-gray-800 p-6 rounded-xl shadow-lg h-full explanation-box">
+                    <h2 id="explanation-title" class="text-xl font-bold text-cyan-400 mb-3">What does it mean?</h2>
+                    <p id="explanation-text" class="text-gray-300 leading-relaxed">
+                        Welcome! A `robots.txt` file is a set of instructions for web crawlers (or "bots"). It's like a website's "house rules" for automated visitors.
+                        <br><br>
+                        It's placed in the root directory of a website (e.g., `www.example.com/robots.txt`) and is the first thing many bots look for.
+                        <br><br>
+                        <strong>Click on any line in the example to the left to see a detailed explanation here.</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Information Section -->
+        <div class="mt-8 bg-gray-800 p-6 rounded-xl shadow-lg">
+            <h3 class="text-xl font-bold text-cyan-400 mb-3">Important Considerations</h3>
+            <p class="text-gray-400 mb-4 text-sm">
+                `robots.txt` governs crawling (fetching URLs), not data reuse. However, because scraping almost always starts by fetching pages, you should treat `robots.txt` as applying to scraping too.
+            </p>
+            <h4 class="text-lg font-semibold text-cyan-500 mb-2">See it live:</h4>
+            <ul class="list-disc list-inside text-gray-300">
+                <li><a href="https://www.google.com/robots.txt" target="_blank" class="text-cyan-400 hover:underline">Google's robots.txt</a></li>
+                <li><a href="https://en.wikipedia.org/robots.txt" target="_blank" class="text-cyan-400 hover:underline">Wikipedia's robots.txt</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Data for explanations
+        const explanations = {
+            // Generic Example Explanations
+            'line-ua-all': {
+                title: 'User-agent: *',
+                text: 'The <code>User-agent</code> directive specifies which crawler the rules apply to. The asterisk <code>*</code> is a wildcard, meaning these rules apply to <strong>all</strong> web crawlers that don\'t have more specific rules defined for them elsewhere in the file.'
+            },
+            'line-disallow-admin': {
+                title: 'Disallow: /admin/',
+                text: 'The <code>Disallow</code> directive tells crawlers not to access a specific path. In this case, we are blocking all crawlers from accessing any URL that starts with <code>/admin/</code>. This is common for protecting sensitive areas of a website.'
+            },
+            'line-disallow-private': {
+                title: 'Disallow: /private/',
+                text: 'Similar to the previous rule, this line blocks access to any URL under the <code>/private/</code> directory. This helps keep user-specific or non-public pages out of search engine results.'
+            },
+            'line-allow-public': {
+                title: 'Allow: /public/',
+                text: 'The <code>Allow</code> directive explicitly permits a crawler to access a subdirectory, even if its parent directory is disallowed. For example, if you disallowed <code>/</code> but wanted to allow <code>/public/</code>, you would use this. It overrides a <code>Disallow</code> rule.'
+            },
+            'line-ua-google': {
+                title: 'User-agent: Googlebot',
+                text: 'This starts a new set of rules that apply <strong>only</strong> to Google\'s main web crawler, named "Googlebot". Specific rules always override the general rules set by <code>User-agent: *</code>.'
+            },
+            'line-disallow-search': {
+                title: 'Disallow: /search',
+                text: 'This rule, specific to Googlebot, prevents it from crawling internal search result pages. This is a best practice, as these pages can be low-quality and create a lot of duplicate content in search indexes.'
+            },
+            'line-ua-bing': {
+                title: 'User-agent: Bingbot',
+                text: 'This begins another specific block of rules, this time for Microsoft\'s crawler, "Bingbot".'
+            },
+            'line-crawl-delay': {
+                title: 'Crawl-delay: 10',
+                text: 'The <code>Crawl-delay</code> directive asks the specified crawler (Bingbot, in this case) to wait for a certain number of seconds between requests. Here, it\'s 10 seconds. This is used to prevent the crawler from overwhelming a server with too many requests in a short time. Note: Googlebot does not follow this directive; for Google, you must set the crawl rate in Google Search Console.'
+            },
+            'line-sitemap': {
+                title: 'Sitemap: https://...',
+                text: 'The <code>Sitemap</code> directive is not a rule, but a pointer. It tells crawlers the location of the website\'s XML sitemap. A sitemap helps crawlers discover all the important pages on a site more efficiently. You can have multiple sitemap entries.'
+            },
+            // Google Example Explanations
+            'line-google-ua-all': {
+                title: 'User-agent: *',
+                text: 'This is the start of the rules for all crawlers (the wildcard <code>*</code>). Google sets its most general rules here.'
+            },
+            'line-google-disallow-search': {
+                title: 'Disallow: /search',
+                text: 'Google blocks all crawlers from its main search functionality. This prevents other search engines from indexing Google\'s search results and avoids creating infinite loops of crawling.'
+            },
+            'line-google-allow-search-about': {
+                title: 'Allow: /search/about',
+                text: 'Even though <code>/search</code> is disallowed, this <code>Allow</code> rule creates an exception. It specifically permits crawlers to access the "about" page for search, showing how to open up a small part of a blocked directory.'
+            },
+             'line-google-allow-search-static': {
+                title: 'Allow: /search/static',
+                text: 'Similar to the rule above, this allows crawlers to access necessary static resources like CSS or JavaScript files that might live in the otherwise blocked <code>/search</code> directory. This ensures pages that *are* crawled can render correctly.'
+            },
+            'line-google-disallow-sdch': {
+                title: 'Disallow: /sdch/',
+                text: 'This blocks a directory likely related to "Shared Dictionary Compression over HTTP," a now-deprecated web technology. It shows that `robots.txt` is often used to block technical or system directories that are not useful for users.'
+            },
+             'line-google-disallow-groups': {
+                title: 'Disallow: /groups',
+                text: 'This rule blocks crawlers from accessing the Google Groups service. This is likely to prevent indexing of user-generated content that may be private or low-quality.'
+            },
+            'line-google-disallow-images': {
+                title: 'Disallow: /images',
+                text: 'This blocks crawlers from the main Google Images search service, similar to how the main search is blocked.'
+            },
+            'line-google-ua-adsbot': {
+                title: 'User-agent: AdsBot-Google',
+                text: 'This starts a new block of rules specifically for Google\'s AdsBot. This bot crawls landing pages for ads to check their quality and relevance. It often needs different, more permissive rules than the general web crawler.'
+            },
+            'line-google-disallow-none': {
+                title: 'Disallow: ',
+                text: 'A <code>Disallow</code> directive with no path after it means "disallow nothing". This line explicitly tells the AdsBot-Google crawler that it is allowed to crawl everything on the site, overriding any general disallow rules from the <code>User-agent: *</code> block.'
+            },
+            'line-google-sitemap1': {
+                title: 'Sitemap: .../sitemap.xml',
+                text: 'Google provides the location of its main sitemap. This helps crawlers efficiently find and index all of Google\'s primary pages.'
+            },
+            'line-google-sitemap2': {
+                title: 'Sitemap: .../googlenews.sitemap.xml',
+                text: 'A website can specify multiple sitemaps. Here, Google points to a separate sitemap specifically for its Google News content, ensuring news articles are discovered quickly.'
+            },
+            // Default message
+            'default': {
+                 title: 'What does it mean?',
+                 text: 'Welcome! A `robots.txt` file is a set of instructions for web crawlers (or "bots"). It\'s like a website\'s "house rules" for automated visitors.<br><br>It\'s placed in the root directory of a website (e.g., `www.example.com/robots.txt`) and is the first thing many bots look for.<br><br><strong>Click on any line in the example to the left to see a detailed explanation here.</strong>'
+            }
+        };
+
+        // DOM elements
+        const explanationBox = document.getElementById('explanation-box');
+        const explanationTitle = document.getElementById('explanation-title');
+        const explanationText = document.getElementById('explanation-text');
+        const codeContainer = document.getElementById('code-container');
+        const tabsContainer = document.getElementById('tabs');
+        let activeLine = null;
+
+        function resetExplanation() {
+            explanationTitle.innerHTML = explanations.default.title;
+            explanationText.innerHTML = explanations.default.text;
+            if(activeLine) {
+                activeLine.classList.remove('active');
+                activeLine = null;
+            }
+        }
+
+        // Event listener for tabs
+        tabsContainer.addEventListener('click', function(e) {
+            const targetTab = e.target.closest('.tab');
+            if (!targetTab) return;
+
+            // Deactivate all tabs and code blocks
+            tabsContainer.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            codeContainer.querySelectorAll('.code-block').forEach(block => block.classList.remove('active'));
+            
+            // Activate clicked tab and corresponding code block
+            targetTab.classList.add('active');
+            const targetContentId = targetTab.dataset.target;
+            document.getElementById(targetContentId).classList.add('active');
+
+            // Reset explanation
+            resetExplanation();
+        });
+
+        // Event listener for clicks on interactive lines
+        codeContainer.addEventListener('click', function(e) {
+            const targetLine = e.target.closest('.interactive-line');
+            if (!targetLine) return;
+
+            const lineId = targetLine.id;
+            const explanation = explanations[lineId] || explanations['default'];
+            
+            // Fade out
+            explanationBox.style.opacity = 0;
+
+            // Remove active class from previous line
+            if (activeLine) {
+                activeLine.classList.remove('active');
+            }
+
+            // Add active class to current line
+            targetLine.classList.add('active');
+            activeLine = targetLine;
+
+            // Update content and fade in after a short delay
+            setTimeout(() => {
+                explanationTitle.innerHTML = explanation.title;
+                explanationText.innerHTML = explanation.text;
+                explanationBox.style.opacity = 1;
+            }, 200);
+        });
+
+        // Initialize with default text
+        resetExplanation();
+    </script>
+</body>
+</html>
