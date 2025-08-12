@@ -30,7 +30,7 @@
             padding: 0 1.5rem;
         }
         .content-panel.open {
-            max-height: 550px; /* Increased height */
+            max-height: 750px; /* Increased height */
             padding: 1.5rem;
         }
         .tab-btn {
@@ -71,10 +71,10 @@
             box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
         }
         .er-diagram-container:hover .line-student-enroll {
-            background-color: #3b82f6;
+            stroke: #3b82f6; /* blue-500 */
         }
         .er-diagram-container:hover .line-course-enroll {
-            background-color: #10b981;
+            stroke: #10b981; /* emerald-500 */
         }
     </style>
 </head>
@@ -116,45 +116,56 @@
                 </div>
                 <div id="panel-schema" class="content-panel">
                     <p>The schema is often visualized with an <strong>Entity-Relationship (ER) diagram</strong>. Below is an example of a many-to-many relationship between Students and Courses, linked by an Enrollments junction table.</p>
-                    <div class="mt-4 p-4 bg-gray-900 rounded-lg er-diagram-container">
-                        <div class="relative grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center text-center gap-x-1 md:gap-x-2 h-40">
-                            <!-- Student Entity -->
-                            <div class="entity entity-student p-2 rounded-lg w-full">
-                                <strong>Students</strong>
-                                <hr class="border-gray-600 my-1">
-                                <small class="text-gray-400">PK: student_id</small>
-                            </div>
 
-                            <!-- Line 1 -->
-                            <div class="relative w-full text-center">
-                                <div class="h-0.5 relationship-line line-student-enroll"></div>
-                                <div class="absolute -top-3 left-1 text-xs text-gray-400">1</div>
-                                <div class="absolute -top-3 right-1 text-xs text-gray-400">*</div>
-                            </div>
-
-                            <!-- Enrollment Junction Table -->
-                            <div class="entity entity-enrollment p-2 rounded-lg w-full">
-                                <strong>Enrollments</strong>
-                                <hr class="border-gray-600 my-1">
-                                <small class="text-gray-400 block text-xs md:text-sm">FK: student_id</small>
-                                <small class="text-gray-400 block text-xs md:text-sm">FK: course_id</small>
-                            </div>
-
-                            <!-- Line 2 -->
-                             <div class="relative w-full text-center">
-                                <div class="h-0.5 relationship-line line-course-enroll"></div>
-                                <div class="absolute -top-3 left-1 text-xs text-gray-400">*</div>
-                                <div class="absolute -top-3 right-1 text-xs text-gray-400">1</div>
-                            </div>
-
-                            <!-- Course Entity -->
-                            <div class="entity entity-course p-2 rounded-lg w-full">
-                                <strong>Courses</strong>
-                                <hr class="border-gray-600 my-1">
-                                <small class="text-gray-400">PK: course_id</small>
-                            </div>
+                    <!-- ER Diagram (with connected lines via SVG) -->
+                    <div class="mt-4 p-4 bg-gray-900 rounded-lg er-diagram-container relative h-64">
+                        <!-- Boxes -->
+                        <div id="box-students" class="entity entity-student p-3 rounded-lg w-48 absolute left-4 top-1/2 -translate-y-1/2">
+                            <strong>Students</strong>
+                            <hr class="border-gray-600 my-1">
+                            <small class="text-gray-400">PK: student_id</small>
                         </div>
+
+                        <div id="box-enrollments" class="entity entity-enrollment p-3 rounded-lg w-56 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                            <strong>Enrollments</strong>
+                            <hr class="border-gray-600 my-1">
+                            <small class="text-gray-400 block text-xs">PK: enrollment_id (optional)</small>
+                            <small class="text-gray-400 block text-xs">FK: student_id</small>
+                            <small class="text-gray-400 block text-xs">FK: course_id</small>
+                        </div>
+
+                        <div id="box-courses" class="entity entity-course p-3 rounded-lg w-48 absolute right-4 top-1/2 -translate-y-1/2">
+                            <strong>Courses</strong>
+                            <hr class="border-gray-600 my-1">
+                            <small class="text-gray-400">PK: course_id</small>
+                        </div>
+
+                        <!-- SVG overlay for connectors -->
+                        <svg class="absolute inset-0 pointer-events-none" viewBox="0 0 1000 256" preserveAspectRatio="none" aria-hidden="true">
+                            <defs>
+                                <!-- Arrow marker for direction if needed -->
+                                <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="strokeWidth">
+                                    <path d="M0,0 L6,3 L0,6 Z" fill="currentColor"></path>
+                                </marker>
+                            </defs>
+                            <!--
+                              We approximate box centers using a fixed layout that mirrors the absolute positions above.
+                              Left box center ~ x=120, middle ~ x=500, right ~ x=880 (in this 1000-wide viewBox)
+                              All at y=128 (half of 256 height).
+                            -->
+                            <!-- Student -> Enrollments (1..*): blue line -->
+                            <line x1="120" y1="128" x2="460" y2="128" stroke="currentColor" stroke-width="3" class="line-student-enroll" />
+                            <!-- Cardinality labels -->
+                            <text x="200" y="110" font-size="12" fill="#9CA3AF">1</text>
+                            <text x="420" y="110" font-size="12" fill="#9CA3AF">*</text>
+
+                            <!-- Enrollments -> Courses (*..1): green line -->
+                            <line x1="540" y1="128" x2="880" y2="128" stroke="currentColor" stroke-width="3" class="line-course-enroll" />
+                            <text x="560" y="110" font-size="12" fill="#9CA3AF">*</text>
+                            <text x="820" y="110" font-size="12" fill="#9CA3AF">1</text>
+                        </svg>
                     </div>
+                    <p class="text-sm text-gray-400 mt-3">Tip: The <em>Enrollments</em> table is a classic <strong>junction table</strong>. You can either use a surrogate PK (e.g., <code>enrollment_id</code>) or a composite PK of <code>(student_id, course_id)</code>.</p>
                 </div>
             </div>
 
@@ -166,9 +177,9 @@
                 </div>
                 <div id="panel-keys" class="content-panel">
                     <div class="flex flex-wrap gap-2 mb-4">
-                        <button class="tab-btn active px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('keys', 'pk')">PRIMARY KEY</button>
-                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('keys', 'fk')">FOREIGN KEY</button>
-                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('keys', 'other')">Others</button>
+                        <button class="tab-btn active px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab(event, 'keys', 'pk')">PRIMARY KEY</button>
+                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab(event, 'keys', 'fk')">FOREIGN KEY</button>
+                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab(event, 'keys', 'other')">Others</button>
                     </div>
                     <div id="keys-content-pk" class="tab-content">
                         <h3 class="font-bold text-amber-300">PRIMARY KEY</h3>
@@ -236,10 +247,10 @@
                 </div>
                 <div id="panel-sql" class="content-panel">
                     <div class="flex flex-wrap gap-2 mb-4">
-                        <button class="tab-btn active px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('sql', 'ddl')">DDL</button>
-                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('sql', 'dml')">DML</button>
-                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('sql', 'dcl')">DCL</button>
-                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('sql', 'tcl')">TCL</button>
+                        <button class="tab-btn active px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab(event, 'sql', 'ddl')">DDL</button>
+                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab(event, 'sql', 'dml')">DML</button>
+                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab(event, 'sql', 'dcl')">DCL</button>
+                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab(event, 'sql', 'tcl')">TCL</button>
                     </div>
                     <div id="sql-content-ddl" class="tab-content">
                         <h3 class="font-bold text-cyan-300">Data Definition Language (DDL)</h3>
@@ -309,8 +320,8 @@
             }
         }
 
-        // Function to handle tabbed content
-        function showTab(category, tabId) {
+        // Function to handle tabbed content (fixed: pass event explicitly)
+        function showTab(evt, category, tabId) {
             // Get all content divs for the category and hide them
             const contentDivs = document.querySelectorAll(`[id^="${category}-content-"]`);
             contentDivs.forEach(div => {
@@ -330,9 +341,8 @@
             }
 
             // Activate the clicked button
-            const clickedButton = event.target;
-            if (clickedButton) {
-                clickedButton.classList.add('active');
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.classList.add('active');
             }
         }
     </script>
