@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive: Types of Web Scraping Data</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            color: #2563eb;
+            font-weight: 600;
+        }
+        .tab-inactive {
+            border-color: transparent;
+            color: #4b5563;
+        }
+        .content-section {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        .content-hidden {
+            opacity: 0;
+            transform: translateY(10px);
+            position: absolute;
+            pointer-events: none;
+        }
+        .content-visible {
+            opacity: 1;
+            transform: translateY(0);
+            position: static;
+        }
+        /* For code blocks */
+        pre[class*="language-"] {
+            padding: 1em !important;
+            margin: .5em 0 !important;
+            overflow: auto !important;
+            border-radius: 0.5rem !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+    <div class="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-slate-900">Is Web Scraping Only for Structured Data?</h1>
+            <p class="mt-2 text-lg text-slate-600">Short answer: <span class="font-semibold text-blue-600">No</span>. Explore the different types of data you can extract.</p>
+        </header>
+
+        <!-- Tabs Navigation -->
+        <div class="mb-6">
+            <div class="border-b border-slate-200">
+                <nav class="-mb-px flex flex-wrap gap-x-2 sm:gap-x-4" aria-label="Tabs">
+                    <button id="tab-structured" class="tab-active text-sm sm:text-base whitespace-nowrap border-b-2 py-3 px-3 sm:px-4 font-medium transition-colors duration-200">
+                        Structured
+                    </button>
+                    <button id="tab-semi-structured" class="tab-inactive text-sm sm:text-base whitespace-nowrap border-b-2 py-3 px-3 sm:px-4 font-medium transition-colors duration-200">
+                        Semi-Structured
+                    </button>
+                    <button id="tab-unstructured" class="tab-inactive text-sm sm:text-base whitespace-nowrap border-b-2 py-3 px-3 sm:px-4 font-medium transition-colors duration-200">
+                        Unstructured
+                    </button>
+                    <button id="tab-non-html" class="tab-inactive text-sm sm:text-base whitespace-nowrap border-b-2 py-3 px-3 sm:px-4 font-medium transition-colors duration-200">
+                        Non-HTML Files
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Content Sections Container -->
+        <div class="relative">
+            <!-- Structured Data Section -->
+            <div id="content-structured" class="content-section content-visible">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-1">Examples: Tables & Lists</h3>
+                    <p class="text-sm text-slate-500 mb-4">Data in `&lt;table&gt;`, `&lt;ol&gt;`, or `&lt;ul&gt;` tags. The HTML structure directly maps to a data table, making it easy to scrape.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Example 1: Table -->
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                             <h4 class="font-semibold mb-2">Product Pricing</h4>
+                             <table class="w-full text-left border-collapse">
+                                <thead class="bg-slate-200">
+                                    <tr>
+                                        <th class="p-2 text-sm font-semibold text-slate-600 rounded-tl-lg">Product</th>
+                                        <th class="p-2 text-sm font-semibold text-slate-600 rounded-tr-lg">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-slate-200">
+                                        <td class="p-2">Laptop Pro X</td>
+                                        <td class="p-2 font-mono">$1299.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2">Wireless Mouse</td>
+                                        <td class="p-2 font-mono">$49.99</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Example 2: Ordered List -->
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-semibold mb-2">Top Airports (2023)</h4>
+                            <ol class="list-decimal list-inside space-y-1 text-slate-700">
+                                <li>Hartsfield-Jackson Atlanta (ATL)</li>
+                                <li>Dubai International (DXB)</li>
+                                <li>Dallas/Fort Worth (DFW)</li>
+                            </ol>
+                        </div>
+                        <!-- Example 3: Unordered List -->
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <h4 class="font-semibold mb-2">Recipe Ingredients</h4>
+                            <ul class="list-disc list-inside space-y-1 text-slate-700">
+                                <li>2 cups flour</li>
+                                <li>1 cup sugar</li>
+                                <li>3 large eggs</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Semi-Structured Data Section -->
+            <div id="content-semi-structured" class="content-section content-hidden">
+                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-1">Examples: Cards & Metadata</h3>
+                    <p class="text-sm text-slate-500 mb-4">Data is in repeating blocks (like product cards) or in "hidden" tags like `&lt;meta&gt;` and `&lt;script&gt;`.</p>
+                    <div class="grid lg:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold mb-2 text-slate-800">Visible Content (Cards)</h4>
+                            <!-- Card 1 -->
+                            <div class="flex items-start gap-4 p-4 border border-slate-200 rounded-lg" itemscope itemtype="http://schema.org/Product">
+                                <img src="https://placehold.co/100x100/e2e8f0/475569?text=Laptop" alt="Laptop" class="w-24 h-24 rounded-md object-cover bg-slate-200 flex-shrink-0" itemprop="image">
+                                <div>
+                                    <h4 class="font-semibold text-slate-800" itemprop="name">Modern Laptop Pro</h4>
+                                    <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                                        <p class="text-sm font-bold text-blue-600 mt-1" itemprop="priceCurrency" content="USD">$<span itemprop="price">1200</span></p>
+                                    </div>
+                                    <p class="text-sm text-slate-500 mt-2" itemprop="description">16GB RAM, 512GB SSD</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <h4 class="font-semibold mb-2 text-slate-800">"Hidden" Data in HTML</h4>
+                            <div>
+                                <h5 class="text-sm font-semibold">Meta Tags</h5>
+                                <pre class="bg-slate-800 text-slate-300 text-xs p-3 rounded-lg mt-1"><code>&lt;meta name="description" content="..."&gt;
+&lt;meta property="og:title" content="..."&gt;</code></pre>
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-semibold">JSON-LD Script</h5>
+                                <pre class="bg-slate-800 text-slate-300 text-xs p-3 rounded-lg mt-1"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Modern Laptop Pro",
+  ...
+}
+&lt;/script&gt;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unstructured Data Section -->
+            <div id="content-unstructured" class="content-section content-hidden">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-1">Example: Free Text</h3>
+                    <p class="text-sm text-slate-500 mb-4">Information is in paragraphs. You scrape the raw text, then use tools like regex, string rules, or NLP to pull out specific facts (dates, names, prices).</p>
+                    <div class="text-slate-600 leading-relaxed p-4 bg-slate-50 rounded-lg">
+                        <p>
+                            I am doing the module Data Handling and Analysis for the first time. I received my final coursework and I have already joined a group. I will need to learn quite a number of concepts independently to successfully complete this coursework. 
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Non-HTML Files Section -->
+            <div id="content-non-html" class="content-section content-hidden">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-1">Example: Non-HTML Files</h3>
+                    <p class="text-sm text-slate-500 mb-4">Data is inside an image or PDF. This requires an OCR (Optical Character Recognition) tool to convert the image to text. The results can be **noisy** and often need cleaning.</p>
+                    <img src="https://placehold.co/600x350/e2e8f0/475569?text=John+Luc%0AData+Analyst%0A(230)+5777-7777%0Ajane.doe@email.com" alt="Business Card Image" class="w-full rounded-lg border border-slate-200">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Tab Navigation Logic ---
+        const tabs = document.querySelectorAll('button[id^="tab-"]');
+        const contentSections = document.querySelectorAll('div[id^="content-"]');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Deactivate all tabs and hide all content
+                tabs.forEach(t => {
+                    t.classList.remove('tab-active');
+                    t.classList.add('tab-inactive');
+                });
+                contentSections.forEach(section => {
+                    section.classList.remove('content-visible');
+                    section.classList.add('content-hidden');
+                });
+
+                // Activate the clicked tab
+                tab.classList.remove('tab-inactive');
+                tab.classList.add('tab-active');
+
+                // Show the corresponding content
+                const contentId = tab.id.replace('tab-', 'content-');
+                const activeContent = document.getElementById(contentId);
+                if (activeContent) {
+                    activeContent.classList.remove('content-hidden');
+                    activeContent.classList.add('content-visible');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
