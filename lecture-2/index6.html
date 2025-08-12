@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide: JSON vs. Parquet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .step {
+            display: none;
+        }
+        .step.active {
+            display: block;
+        }
+        .json-key { color: #3b82f6; } /* blue-500 */
+        .json-string { color: #16a34a; } /* green-600 */
+        .json-number { color: #f97316; } /* orange-500 */
+        .json-boolean { color: #f97316; } /* orange-500 */
+        .json-punctuation { color: #4b5563; } /* gray-600 */
+        .highlight {
+            background-color: #fef08a; /* yellow-200 */
+            border-radius: 4px;
+            transition: all 0.3s ease-in-out;
+        }
+        .column-block {
+            transition: all 0.3s ease-in-out;
+            border: 2px solid transparent;
+        }
+        .column-block.selected {
+            border-color: #ef4444; /* red-500 */
+            transform: scale(1.05);
+        }
+        .btn-choice {
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-choice:hover {
+            transform: translateY(-2px);
+        }
+        .correct { background-color: #dcfce7 !important; border-color: #22c55e !important; } /* green-100, green-500 */
+        .incorrect { background-color: #fee2e2 !important; border-color: #ef4444 !important; } /* red-100, red-500 */
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-4xl bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+        <div class="p-6 md:p-8">
+            <!-- Step 1: Introduction -->
+            <div id="step-1" class="step active">
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Understanding Data Formats: JSON vs. Parquet</h1>
+                <p class="text-gray-600 mb-6">Let's explore two important ways to store data. They look different and are used for very different tasks. Click "Next" to begin.</p>
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
+                    <p class="text-blue-800">This is an interactive guide. You'll be able to click on elements and see explanations as we go.</p>
+                </div>
+            </div>
+
+            <!-- Step 2: What is JSON? -->
+            <div id="step-2" class="step">
+                <h2 class="text-2xl font-bold mb-2">Step 1: JSON (The Flexible Organizer 🗂️)</h2>
+                <p class="text-gray-600 mb-4">JSON stores data in <span class="font-semibold text-blue-600">key-value</span> pairs. It's great for data with nested structures, like a user profile. It's human-readable and the standard for web APIs.</p>
+                <div class="bg-gray-900 text-white p-4 rounded-lg text-sm md:text-base font-mono whitespace-pre-wrap" id="json-container">
+<pre>{
+  "<span class="json-key">"userId"</span>": "<span class="json-string">"usr_101"</span>",
+  "<span class="json-key">"username"</span>": "<span class="json-string">"SuperCoder"</span>",
+  "<span class="json-key">"isActive"</span>": <span class="json-boolean">true</span>,
+  "<span class="json-key" id="profile-key">"profile"</span>": {
+    "<span class="json-key">"displayName"</span>": "<span class="json-string">"Alex Taylor"</span>"
+  },
+  "<span class="json-key" id="comments-key">"recentComments"</span>": [
+    { "<span class="json-key">"commentId"</span>": "<span class="json-string">"com_987"</span>" },
+    { "<span class="json-key">"commentId"</span>": "<span class="json-string">"com_988"</span>" }
+  ]
+}</pre>
+                </div>
+                <p id="json-explainer" class="mt-4 text-gray-700 bg-yellow-100 border-l-4 border-yellow-400 p-3 rounded-r-lg min-h-[50px]">
+                    Click on the highlighted keys like <code class="bg-yellow-200 rounded px-1">profile</code> or <code class="bg-yellow-200 rounded px-1">recentComments</code> to learn more.
+                </p>
+            </div>
+
+            <!-- Step 3: The Problem for Analytics -->
+            <div id="step-3" class="step">
+                <h2 class="text-2xl font-bold mb-2">The Problem: Reading Row-by-Row</h2>
+                <p class="text-gray-600 mb-4">JSON and CSV are **row-based**. To find all values in one column (e.g., `eventType`), the computer must read through every single row from top to bottom. This is slow for big data.</p>
+                <p class="text-gray-600 mb-4">Imagine we want to find how many "add_to_cart" events happened. Watch how much data we have to scan.</p>
+                <div id="row-based-viz" class="space-y-1">
+                    <!-- This will be populated by JS -->
+                </div>
+                <div id="scan-result" class="mt-4 font-semibold text-center"></div>
+            </div>
+
+            <!-- Step 4: What is Parquet? -->
+            <div id="step-4" class="step">
+                <h2 class="text-2xl font-bold mb-2">Step 2: Parquet (The High-Performance Warehouse 🏢)</h2>
+                <p class="text-gray-600 mb-4">Parquet is **columnar**. It stores all values for a single column together. It's not human-readable but is extremely fast for analytics.</p>
+                <p class="text-gray-600 mb-4">Now, let's find all "add_to_cart" events. Notice we only need to read ONE block of data!</p>
+                <div id="column-based-viz" class="grid grid-cols-3 md:grid-cols-5 gap-2 text-center text-xs md:text-sm">
+                    <!-- This will be populated by JS -->
+                </div>
+                 <div id="column-scan-result" class="mt-4 font-semibold text-center"></div>
+            </div>
+
+            <!-- Step 5: Quiz -->
+            <div id="step-5" class="step">
+                <h2 class="text-2xl font-bold mb-2">When to Choose Which?</h2>
+                <p class="text-gray-600 mb-6">Based on what you've learned, pick the best format for each scenario.</p>
+                <div class="space-y-6">
+                    <!-- Scenario 1 -->
+                    <div class="bg-gray-100 p-4 rounded-lg border">
+                        <p class="font-semibold mb-2">Scenario 1: You are building a mobile app and need to fetch a user's profile information from your server.</p>
+                        <div class="flex gap-4">
+                            <button data-correct="true" class="btn-choice w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-blue-600">JSON</button>
+                            <button data-correct="false" class="btn-choice w-full bg-teal-500 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-teal-600">Parquet</button>
+                        </div>
+                        <p class="feedback mt-2 text-sm hidden"></p>
+                    </div>
+                    <!-- Scenario 2 -->
+                    <div class="bg-gray-100 p-4 rounded-lg border">
+                        <p class="font-semibold mb-2">Scenario 2: You have a 500 GB dataset of sensor readings and need to calculate the average temperature reading across all sensors.</p>
+                        <div class="flex gap-4">
+                            <button data-correct="false" class="btn-choice w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-blue-600">JSON</button>
+                            <button data-correct="true" class="btn-choice w-full bg-teal-500 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-teal-600">Parquet</button>
+                        </div>
+                         <p class="feedback mt-2 text-sm hidden"></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Navigation -->
+        <div class="bg-gray-100 px-6 py-4 flex justify-between items-center border-t">
+            <button id="prev-btn" class="bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-400 disabled:bg-gray-200 disabled:cursor-not-allowed" disabled>Previous</button>
+            <div id="step-indicator" class="text-sm text-gray-500"></div>
+            <button id="next-btn" class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700">Next</button>
+        </div>
+    </div>
+
+    <script>
+        const steps = document.querySelectorAll('.step');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const stepIndicator = document.getElementById('step-indicator');
+        let currentStep = 0;
+
+        const totalSteps = steps.length;
+
+        function updateButtons() {
+            prevBtn.disabled = currentStep === 0;
+            if (currentStep === totalSteps - 1) {
+                nextBtn.textContent = 'Finish';
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+            stepIndicator.textContent = `Step ${currentStep + 1} of ${totalSteps}`;
+        }
+
+        function showStep(index) {
+            steps.forEach((step, i) => {
+                step.classList.toggle('active', i === index);
+            });
+            currentStep = index;
+            updateButtons();
+            
+            // Trigger animations/visualizations for specific steps
+            if (currentStep === 2) {
+                animateRowScan();
+            }
+            if (currentStep === 3) {
+                setupColumnarViz();
+            }
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentStep < totalSteps - 1) {
+                showStep(currentStep + 1);
+            } else {
+                // Reset or show a final message
+                showStep(0);
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 0) {
+                showStep(currentStep - 1);
+            }
+        });
+
+        // --- Interactivity for Step 2: JSON ---
+        const jsonExplainer = document.getElementById('json-explainer');
+        const profileKey = document.getElementById('profile-key');
+        const commentsKey = document.getElementById('comments-key');
+
+        profileKey.style.cursor = 'pointer';
+        profileKey.classList.add('highlight');
+        commentsKey.style.cursor = 'pointer';
+        commentsKey.classList.add('highlight');
+
+        profileKey.addEventListener('click', () => {
+            jsonExplainer.innerHTML = '✅ This is a <strong class="text-blue-600">nested object</strong>. It\'s like a key-value pair where the value is another set of key-value pairs. Perfect for structured data!';
+        });
+
+        commentsKey.addEventListener('click', () => {
+            jsonExplainer.innerHTML = '✅ This is an <strong class="text-blue-600">array</strong> (a list) of objects. It allows you to store multiple items, like comments or tags, under a single key.';
+        });
+
+        // --- Visualization for Step 3 & 4 ---
+        const rowData = [
+            { userId: 'usr_123', eventType: 'page_view', device: 'mobile' },
+            { userId: 'usr_456', eventType: 'page_view', device: 'desktop' },
+            { userId: 'usr_456', eventType: 'add_to_cart', device: 'desktop' },
+            { userId: 'usr_789', eventType: 'page_view', device: 'mobile' },
+            { userId: 'usr_123', eventType: 'add_to_cart', device: 'mobile' },
+            { userId: 'usr_456', eventType: 'purchase', device: 'desktop' },
+        ];
+
+        const rowBasedViz = document.getElementById('row-based-viz');
+        
+        function animateRowScan() {
+            rowBasedViz.innerHTML = ''; // Clear previous
+            document.getElementById('scan-result').innerHTML = '';
+            let count = 0;
+            
+            rowData.forEach((row, index) => {
+                const rowEl = document.createElement('div');
+                rowEl.className = 'p-2 rounded-md bg-gray-100 grid grid-cols-3 gap-2 text-xs md:text-sm transition-all duration-300';
+                rowEl.innerHTML = `
+                    <span class="truncate"><strong>userId:</strong> ${row.userId}</span>
+                    <span class="truncate"><strong>eventType:</strong> ${row.eventType}</span>
+                    <span class="truncate"><strong>device:</strong> ${row.device}</span>`;
+                rowBasedViz.appendChild(rowEl);
+            });
+
+            const rows = rowBasedViz.children;
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i > 0) rows[i - 1].classList.remove('highlight', 'bg-yellow-200');
+                if (i < rows.length) {
+                    rows[i].classList.add('highlight', 'bg-yellow-200');
+                    if (rowData[i].eventType === 'add_to_cart') {
+                        count++;
+                    }
+                    document.getElementById('scan-result').innerHTML = `Scanned ${i + 1} rows... Found ${count} 'add_to_cart' events.`;
+                } else {
+                    clearInterval(interval);
+                    rows[i - 1].classList.remove('highlight', 'bg-yellow-200');
+                    document.getElementById('scan-result').innerHTML = `Finished! Scanned all <strong>${rows.length} rows</strong> to find <strong>${count}</strong> matching events.`;
+                }
+                i++;
+            }, 500);
+        }
+
+        const columnBasedViz = document.getElementById('column-based-viz');
+
+        function setupColumnarViz() {
+            columnBasedViz.innerHTML = ''; // Clear previous
+            document.getElementById('column-scan-result').innerHTML = "Click the 'eventType' column to read it.";
+
+            const columns = {
+                userId: rowData.map(r => r.userId),
+                eventType: rowData.map(r => r.eventType),
+                device: rowData.map(r => r.device),
+            };
+
+            Object.keys(columns).forEach(key => {
+                const colContainer = document.createElement('div');
+                colContainer.className = 'p-2 rounded-md bg-gray-100 space-y-1 column-block';
+                colContainer.innerHTML += `<div class="font-bold mb-2">${key}</div>`;
+                
+                columns[key].forEach(val => {
+                    colContainer.innerHTML += `<div class="bg-white p-1 rounded">${val}</div>`;
+                });
+                
+                if (key === 'eventType') {
+                    colContainer.classList.add('cursor-pointer', 'hover:bg-gray-200');
+                    colContainer.addEventListener('click', () => {
+                        document.querySelectorAll('.column-block').forEach(c => c.classList.remove('selected'));
+                        colContainer.classList.add('selected');
+                        const count = columns.eventType.filter(e => e === 'add_to_cart').length;
+                        document.getElementById('column-scan-result').innerHTML = `Finished! Read only <strong>1 column</strong> to find <strong>${count}</strong> matching events. Much faster!`;
+                    });
+                }
+                columnBasedViz.appendChild(colContainer);
+            });
+        }
+
+        // --- Interactivity for Step 5: Quiz ---
+        document.querySelectorAll('.btn-choice').forEach(button => {
+            button.addEventListener('click', () => {
+                const isCorrect = button.dataset.correct === 'true';
+                const parent = button.closest('.bg-gray-100');
+                const feedbackEl = parent.querySelector('.feedback');
+                
+                parent.querySelectorAll('.btn-choice').forEach(btn => {
+                    btn.disabled = true;
+                    if (btn.dataset.correct === 'true') {
+                        btn.classList.add('correct');
+                    } else {
+                        btn.classList.add('incorrect');
+                    }
+                });
+
+                feedbackEl.classList.remove('hidden');
+                if (isCorrect) {
+                    feedbackEl.textContent = "Correct! JSON's flexible, nested structure is perfect for representing complex objects like a user profile for an application.";
+                    feedbackEl.className = 'feedback mt-2 text-sm text-green-700';
+                } else {
+                    if (parent.textContent.includes('Scenario 1')) {
+                        feedbackEl.textContent = "Not quite. Parquet is for large-scale analytics, not for sending single objects to an app. JSON is the right choice here.";
+                    } else {
+                         feedbackEl.textContent = "Not quite. Reading a massive JSON file for one calculation would be very slow. Parquet's columnar format is designed for exactly this kind of large-scale analytical query.";
+                    }
+                    feedbackEl.className = 'feedback mt-2 text-sm text-red-700';
+                }
+            });
+        });
+
+
+        // Initial setup
+        showStep(0);
+    </script>
+</body>
+</html>
