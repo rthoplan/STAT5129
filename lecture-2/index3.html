@@ -117,55 +117,88 @@
                 <div id="panel-schema" class="content-panel">
                     <p>The schema is often visualized with an <strong>Entity-Relationship (ER) diagram</strong>. Below is an example of a many-to-many relationship between Students and Courses, linked by an Enrollments junction table.</p>
 
-                    <!-- ER Diagram (with connected lines via SVG) -->
-                    <div class="mt-4 p-4 bg-gray-900 rounded-lg er-diagram-container relative h-64">
-                        <!-- Boxes -->
-                        <div id="box-students" class="entity entity-student p-3 rounded-lg w-48 absolute left-4 top-1/2 -translate-y-1/2">
-                            <strong>Students</strong>
-                            <hr class="border-gray-600 my-1">
-                            <small class="text-gray-400">PK: student_id</small>
-                        </div>
+                    <!-- ER Diagram (World sample: city, countrylanguage, country) -->
+<div class="mt-4 p-4 bg-gray-900 rounded-lg er-diagram-container relative h-96">
+  <!-- Entities -->
+  <div id="box-city" class="entity p-3 rounded-lg w-64 absolute left-4 top-8">
+    <strong class="block">city</strong>
+    <hr class="border-gray-600 my-2">
+    <ul class="text-xs md:text-sm text-gray-300 space-y-1">
+      <li><span class="text-yellow-400">◆</span> ID INT</li>
+      <li><span class="text-cyan-400">◆</span> Name CHAR(35)</li>
+      <li><span class="text-cyan-400">◆</span> CountryCode CHAR(3)</li>
+      <li><span class="text-cyan-400">◆</span> District CHAR(20)</li>
+      <li><span class="text-cyan-400">◆</span> Population INT</li>
+    </ul>
+  </div>
 
-                        <div id="box-enrollments" class="entity entity-enrollment p-3 rounded-lg w-56 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                            <strong>Enrollments</strong>
-                            <hr class="border-gray-600 my-1">
-                            <small class="text-gray-400 block text-xs">PK: enrollment_id (optional)</small>
-                            <small class="text-gray-400 block text-xs">FK: student_id</small>
-                            <small class="text-gray-400 block text-xs">FK: course_id</small>
-                        </div>
+  <div id="box-countrylanguage" class="entity p-3 rounded-lg w-72 absolute left-1/2 -translate-x-1/2 top-8">
+    <strong class="block">countrylanguage</strong>
+    <hr class="border-gray-600 my-2">
+    <ul class="text-xs md:text-sm text-gray-300 space-y-1">
+      <li><span class="text-yellow-400">◆</span> CountryCode CHAR(3)</li>
+      <li><span class="text-cyan-400">◆</span> Language CHAR(30)</li>
+      <li><span class="text-cyan-400">◆</span> IsOfficial ENUM('T','F')</li>
+      <li><span class="text-cyan-400">◆</span> Percentage DECIMAL(4,1)</li>
+    </ul>
+  </div>
 
-                        <div id="box-courses" class="entity entity-course p-3 rounded-lg w-48 absolute right-4 top-1/2 -translate-y-1/2">
-                            <strong>Courses</strong>
-                            <hr class="border-gray-600 my-1">
-                            <small class="text-gray-400">PK: course_id</small>
-                        </div>
+  <div id="box-country" class="entity p-3 rounded-lg w-72 absolute right-4 top-8">
+    <strong class="block">country</strong>
+    <hr class="border-gray-600 my-2">
+    <ul class="text-xs md:text-sm text-gray-300 space-y-1 max-h-52 overflow-auto pr-2">
+      <li><span class="text-yellow-400">◆</span> Code CHAR(3)</li>
+      <li><span class="text-cyan-400">◆</span> Name CHAR(52)</li>
+      <li><span class="text-cyan-400">◆</span> Continent ENUM(...)</li>
+      <li><span class="text-cyan-400">◆</span> Region CHAR(26)</li>
+      <li><span class="text-cyan-400">◆</span> SurfaceArea DECIMAL(10,2)</li>
+      <li><span class="text-cyan-400">◆</span> IndepYear SMALLINT</li>
+      <li><span class="text-cyan-400">◆</span> Population INT</li>
+      <li><span class="text-cyan-400">◆</span> LifeExpectancy DECIMAL(3,1)</li>
+      <li><span class="text-cyan-400">◆</span> GNP DECIMAL(10,2)</li>
+      <li><span class="text-cyan-400">◆</span> GNPOld DECIMAL(10,2)</li>
+      <li><span class="text-cyan-400">◆</span> LocalName CHAR(45)</li>
+      <li><span class="text-cyan-400">◆</span> GovernmentForm CHAR(45)</li>
+      <li><span class="text-cyan-400">◆</span> HeadOfState CHAR(60)</li>
+      <li><span class="text-cyan-400">◆</span> Capital INT</li>
+      <li><span class="text-cyan-400">◆</span> Code2 CHAR(2)</li>
+    </ul>
+  </div>
 
-                        <!-- SVG overlay for connectors -->
-                        <svg class="absolute inset-0 pointer-events-none" viewBox="0 0 1000 256" preserveAspectRatio="none" aria-hidden="true">
-                            <defs>
-                                <!-- Arrow marker for direction if needed -->
-                                <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="strokeWidth">
-                                    <path d="M0,0 L6,3 L0,6 Z" fill="currentColor"></path>
-                                </marker>
-                            </defs>
-                            <!--
-                              We approximate box centers using a fixed layout that mirrors the absolute positions above.
-                              Left box center ~ x=120, middle ~ x=500, right ~ x=880 (in this 1000-wide viewBox)
-                              All at y=128 (half of 256 height).
-                            -->
-                            <!-- Student -> Enrollments (1..*): blue line -->
-                            <line x1="120" y1="128" x2="460" y2="128" stroke="currentColor" stroke-width="3" class="line-student-enroll" />
-                            <!-- Cardinality labels -->
-                            <text x="200" y="110" font-size="12" fill="#9CA3AF">1</text>
-                            <text x="420" y="110" font-size="12" fill="#9CA3AF">*</text>
+  <!-- SVG overlay with crow's-foot connectors -->
+  <svg class="absolute inset-0 pointer-events-none" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <g id="crowfoot" stroke="currentColor" stroke-width="2">
+        <!-- three prongs for many side -->
+        <path d="M0,-8 L12,0"/>
+        <path d="M0,0 L12,0"/>
+        <path d="M0,8 L12,0"/>
+      </g>
+      <g id="onebar" stroke="currentColor" stroke-width="2">
+        <path d="M0,-10 L0,10"/>
+      </g>
+    </defs>
 
-                            <!-- Enrollments -> Courses (*..1): green line -->
-                            <line x1="540" y1="128" x2="880" y2="128" stroke="currentColor" stroke-width="3" class="line-course-enroll" />
-                            <text x="560" y="110" font-size="12" fill="#9CA3AF">*</text>
-                            <text x="820" y="110" font-size="12" fill="#9CA3AF">1</text>
-                        </svg>
-                    </div>
-                    <p class="text-sm text-gray-400 mt-3">Tip: The <em>Enrollments</em> table is a classic <strong>junction table</strong>. You can either use a surrogate PK (e.g., <code>enrollment_id</code>) or a composite PK of <code>(student_id, course_id)</code>.</p>
+    <!-- City.CountryCode -> Country.Code (many-to-one, non-identifying dashed) -->
+    <line x1="240" y1="140" x2="720" y2="220" stroke="currentColor" stroke-width="2.5" stroke-dasharray="6 6"/>
+    <!-- crow's foot near City (many) -->
+    <use href="#crowfoot" x="228" y="140" />
+    <!-- one bar near Country (one) -->
+    <use href="#onebar" x="720" y="210" />
+
+    <!-- CountryLanguage.CountryCode -> Country.Code (many-to-one, solid) -->
+    <line x1="500" y1="140" x2="720" y2="170" stroke="currentColor" stroke-width="3"/>
+    <use href="#crowfoot" x="488" y="140" />
+    <use href="#onebar" x="720" y="160" />
+
+    <!-- Optional labels -->
+    <text x="320" y="128" font-size="12" fill="#9CA3AF">N</text>
+    <text x="700" y="205" font-size="12" fill="#9CA3AF">1</text>
+    <text x="560" y="128" font-size="12" fill="#9CA3AF">N</text>
+    <text x="700" y="155" font-size="12" fill="#9CA3AF">1</text>
+  </svg>
+</div>
+<p class="text-sm text-gray-400 mt-3">Example based on MySQL's classic <em>world</em> sample schema: <strong>city</strong> and <strong>countrylanguage</strong> each reference <strong>country(Code)</strong>. Crow's feet indicate the <em>many</em> side; a single bar indicates the <em>one</em> side.</p>
                 </div>
             </div>
 
