@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Relationships Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .correct {
+            background-color: #d1fae5; /* Green-100 */
+            border-left: 4px solid #10b981; /* Green-500 */
+        }
+        .incorrect {
+            background-color: #fee2e2; /* Red-100 */
+            border-left: 4px solid #ef4444; /* Red-500 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
+    <div class="bg-white w-full max-w-2xl mx-auto rounded-xl shadow-lg p-6 sm:p-8">
+        <!-- Quiz Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">Database Relationships Quiz</h1>
+            <p class="text-gray-600 mt-2">Test your knowledge of data relationship types.</p>
+        </div>
+
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="space-y-6">
+            <!-- Questions will be injected here by JavaScript -->
+        </div>
+
+        <!-- Submit Button -->
+        <div class="mt-8 text-center">
+            <button id="submit-btn" class="w-full sm:w-auto bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out transform hover:scale-105">
+                Check Answers
+            </button>
+        </div>
+
+        <!-- Results Container -->
+        <div id="results-container" class="mt-8 text-center text-2xl font-semibold text-gray-800">
+            <!-- Score will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        const quizContainer = document.getElementById('quiz-container');
+        const submitBtn = document.getElementById('submit-btn');
+        const resultsContainer = document.getElementById('results-container');
+
+        // --- Quiz Data ---
+        const quizData = [
+            {
+                question: "1. A social media user has a single, unique profile page. What kind of relationship is this?",
+                options: ["One-to-One", "One-to-Many", "Many-to-Many"],
+                answer: "One-to-One",
+                explanation: "Correct! Each user has only one profile, and each profile belongs to only one user. This is a classic One-to-One relationship."
+            },
+            {
+                question: "2. An online store has products. Each product can be in many different customer shopping carts, and each cart can contain many products. What relationship describes this?",
+                options: ["One-to-One", "One-to-Many", "Many-to-Many"],
+                answer: "Many-to-Many",
+                explanation: "Exactly! Since a product can be in many carts and a cart can have many products, it's a Many-to-Many relationship, which would need a junction table."
+            },
+            {
+                question: "3. A manager is in charge of several employees, but each employee reports to only one manager. What is this relationship?",
+                options: ["One-to-One", "One-to-Many", "Many-to-Many"],
+                answer: "One-to-Many",
+                explanation: "That's right! One manager can have many employees, making it a One-to-Many relationship from the manager's perspective."
+            },
+            {
+                question: "4. Which relationship type always requires a 'junction table' or 'linking table' to connect the two main tables?",
+                options: ["One-to-One", "One-to-Many", "Many-to-Many"],
+                answer: "Many-to-Many",
+                explanation: "Correct. A Many-to-Many relationship cannot be implemented directly and requires a third table to link the records from the two other tables."
+            },
+            {
+                question: "5. A country has one official flag, and that specific flag design belongs to only one country. What is this relationship?",
+                options: ["One-to-One", "One-to-Many", "Many-to-Many"],
+                answer: "One-to-One",
+                explanation: "Perfect! One country is associated with one flag, and one flag is associated with one country. It's a clear One-to-One relationship."
+            },
+            {
+                question: "6. A single author can write many books, but we'll assume each book in this library is written by only one author. What is the relationship?",
+                options: ["One-to-One", "One-to-Many", "Many-to-Many"],
+                answer: "One-to-Many",
+                explanation: "You got it! One author relates to many books, establishing a One-to-Many relationship."
+            }
+        ];
+
+        // --- Function to Load the Quiz ---
+        function loadQuiz() {
+            let quizHTML = '';
+            quizData.forEach((quizItem, index) => {
+                quizHTML += `
+                    <div id="question-${index}" class="bg-gray-50 border border-gray-200 rounded-lg p-5">
+                        <p class="font-semibold text-lg text-gray-800 mb-4">${quizItem.question}</p>
+                        <div class="space-y-3">
+                `;
+                quizItem.options.forEach(option => {
+                    quizHTML += `
+                        <label class="flex items-center p-3 rounded-md hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
+                            <input type="radio" name="question${index}" value="${option}" class="mr-3 h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300">
+                            <span class="text-gray-700">${option}</span>
+                        </label>
+                    `;
+                });
+                quizHTML += `
+                        </div>
+                        <div id="feedback-${index}" class="mt-3 p-3 rounded-md text-sm font-medium hidden"></div>
+                    </div>
+                `;
+            });
+            quizContainer.innerHTML = quizHTML;
+        }
+
+        // --- Function to Check Answers ---
+        function checkAnswers() {
+            let score = 0;
+            quizData.forEach((quizItem, index) => {
+                const questionCard = document.getElementById(`question-${index}`);
+                const feedbackEl = document.getElementById(`feedback-${index}`);
+                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+
+                // Reset styles
+                questionCard.classList.remove('correct', 'incorrect');
+                feedbackEl.classList.add('hidden');
+
+                if (selectedOption) {
+                    if (selectedOption.value === quizItem.answer) {
+                        score++;
+                        questionCard.classList.add('correct');
+                        feedbackEl.textContent = quizItem.explanation;
+                    } else {
+                        questionCard.classList.add('incorrect');
+                        feedbackEl.textContent = `Not quite. The correct answer is ${quizItem.answer}. ${quizItem.explanation}`;
+                    }
+                    feedbackEl.classList.remove('hidden');
+                } else {
+                    // Handle unanswered questions
+                    questionCard.classList.add('incorrect');
+                    feedbackEl.textContent = `This question was not answered. The correct answer is ${quizItem.answer}.`;
+                    feedbackEl.classList.remove('hidden');
+                }
+            });
+
+            // Display final score
+            resultsContainer.innerHTML = `You scored ${score} out of ${quizData.length}!`;
+            submitBtn.textContent = 'Try Again';
+        }
+
+        // --- Event Listeners ---
+        submitBtn.addEventListener('click', () => {
+            if (submitBtn.textContent === 'Try Again') {
+                // Reset quiz
+                resultsContainer.innerHTML = '';
+                submitBtn.textContent = 'Check Answers';
+                loadQuiz();
+            } else {
+                checkAnswers();
+            }
+        });
+
+        // --- Initial Load ---
+        window.onload = loadQuiz;
+    </script>
+</body>
+</html>
