@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Data Format Comparison</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-btn {
+            transition: all 0.3s ease;
+            border-bottom: 4px solid transparent;
+        }
+        .tab-btn.active {
+            border-bottom-color: #4f46e5; /* indigo-600 */
+            color: #111827; /* gray-900 */
+        }
+        .content-panel {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        .content-panel.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .criterion-item {
+            display: flex;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e5e7eb; /* gray-200 */
+        }
+        .criterion-item:last-child {
+            border-bottom: none;
+        }
+        .criterion-title {
+            width: 30%;
+            font-weight: 600;
+            color: #4b5563; /* gray-600 */
+            flex-shrink: 0;
+        }
+        .criterion-value {
+            width: 70%;
+            color: #111827; /* gray-900 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-4xl bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+        <div class="p-6 md:p-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">Choosing Your Data Format</h1>
+            <p class="text-gray-500 mb-6">Click on a format below to see its details.</p>
+
+            <!-- Tabs -->
+            <div id="tabs" class="border-b border-gray-200 mb-6 flex space-x-4 md:space-x-8">
+                <button data-target="csv" class="tab-btn text-lg font-semibold text-gray-500 pb-2 active">CSV</button>
+                <button data-target="json" class="tab-btn text-lg font-semibold text-gray-500 pb-2">JSON</button>
+                <button data-target="parquet" class="tab-btn text-lg font-semibold text-gray-500 pb-2">Parquet</button>
+            </div>
+
+            <!-- Content Panels -->
+            <div id="content">
+                <!-- CSV Panel -->
+                <div id="csv" class="content-panel active">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">CSV <span class="text-sm font-medium text-gray-500 ml-2">(The Spreadsheet)</span></h2>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Main Purpose</div>
+                        <div class="criterion-value">Quick & Easy Sharing 🤝</div>
+                    </div>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Data Structure</div>
+                        <div class="criterion-value">A single, flat table</div>
+                    </div>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Best For...</div>
+                        <div class="criterion-value">Exporting a simple report for a colleague to open in Excel.</div>
+                    </div>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Readability</div>
+                        <div class="criterion-value">✅ Human-Readable</div>
+                    </div>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Performance</div>
+                        <div class="criterion-value">Slow with large files</div>
+                    </div>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Typical Workflow</div>
+                        <div class="criterion-value"><strong class="text-indigo-600">Start Here:</strong> For initial data dumps & simple sharing.</div>
+                    </div>
+                </div>
+
+                <!-- JSON Panel -->
+                <div id="json" class="content-panel">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">JSON <span class="text-sm font-medium text-gray-500 ml-2">(The Organizer)</span></h2>
+                     <div class="criterion-item">
+                        <div class="criterion-title">Main Purpose</div>
+                        <div class="criterion-value">Web APIs & Configuration 🌐</div>
+                    </div>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Data Structure</div>
+                        <div class="criterion-value">Nested, hierarchical objects</div>
+                    </div>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Best For...</div>
+                        <div class="criterion-value">Getting user data from a social media API.</div>
+                    </div>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Readability</div>
+                        <div class="criterion-value">☑️ Mostly Human-Readable</div>
+                    </div>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Performance</div>
+                        <div class="criterion-value">Slow for direct analysis</div>
+                    </div>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Typical Workflow</div>
+                        <div class="criterion-value"><strong class="text-indigo-600">Middle Step:</strong> For receiving data from web sources.</div>
+                    </div>
+                </div>
+
+                <!-- Parquet Panel -->
+                <div id="parquet" class="content-panel">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">Parquet <span class="text-sm font-medium text-gray-500 ml-2">(The Warehouse)</span></h2>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Main Purpose</div>
+                        <div class="criterion-value">Fast & Efficient Analytics ⚡</div>
+                    </div>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Data Structure</div>
+                        <div class="criterion-value">Large tables with many columns</div>
+                    </div>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Best For...</div>
+                        <div class="criterion-value">Storing 50 million sales records for a BI dashboard.</div>
+                    </div>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Readability</div>
+                        <div class="criterion-value">🚫 Machine-Readable Only</div>
+                    </div>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Performance</div>
+                        <div class="criterion-value">✅ Extremely Fast for analytics</div>
+                    </div>
+                    <div class="criterion-item">
+                        <div class="criterion-title">Typical Workflow</div>
+                        <div class="criterion-value"><strong class="text-indigo-600">End Here:</strong> For storing clean, analysis-ready data.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tabsContainer = document.getElementById('tabs');
+        const contentContainer = document.getElementById('content');
+
+        tabsContainer.addEventListener('click', (event) => {
+            const clickedTab = event.target.closest('.tab-btn');
+            if (!clickedTab) return;
+
+            // Deactivate all tabs and panels
+            tabsContainer.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            contentContainer.querySelectorAll('.content-panel').forEach(panel => panel.classList.remove('active'));
+
+            // Activate the clicked tab
+            clickedTab.classList.add('active');
+
+            // Activate the corresponding content panel
+            const targetId = clickedTab.dataset.target;
+            const targetPanel = document.getElementById(targetId);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
