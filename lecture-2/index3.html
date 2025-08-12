@@ -30,7 +30,7 @@
             padding: 0 1.5rem;
         }
         .content-panel.open {
-            max-height: 750px; /* Increased height */
+            max-height: 550px; /* Increased height */
             padding: 1.5rem;
         }
         .tab-btn {
@@ -56,7 +56,7 @@
         }
         .relationship-line {
             transition: all 0.3s ease;
-            background-color: #ffffff; /* bg-gray-600 */
+            background-color: #ffffff; /* white */
         }
         .er-diagram-container:hover .entity-student {
             border-color: #3b82f6;
@@ -71,10 +71,10 @@
             box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
         }
         .er-diagram-container:hover .line-student-enroll {
-            stroke: #3b82f6; /* blue-500 */
+            background-color: #3b82f6;
         }
         .er-diagram-container:hover .line-course-enroll {
-            stroke: #10b981; /* emerald-500 */
+            background-color: #10b981;
         }
     </style>
 </head>
@@ -115,90 +115,8 @@
                     <p class="text-gray-400 mt-2">The blueprint of the database.</p>
                 </div>
                 <div id="panel-schema" class="content-panel">
-                    <p>The schema is often visualized with an <strong>Entity-Relationship (ER) diagram</strong>. Below is an example of a many-to-many relationship between Students and Courses, linked by an Enrollments junction table.</p>
-
-                    <!-- ER Diagram (World sample: city, countrylanguage, country) -->
-<div class="mt-4 p-4 bg-gray-900 rounded-lg er-diagram-container relative h-96">
-  <!-- Entities -->
-  <div id="box-city" class="entity p-3 rounded-lg w-64 absolute left-4 top-8">
-    <strong class="block">city</strong>
-    <hr class="border-gray-600 my-2">
-    <ul class="text-xs md:text-sm text-gray-300 space-y-1">
-      <li><span class="text-yellow-400">◆</span> ID INT</li>
-      <li><span class="text-cyan-400">◆</span> Name CHAR(35)</li>
-      <li><span class="text-cyan-400">◆</span> CountryCode CHAR(3)</li>
-      <li><span class="text-cyan-400">◆</span> District CHAR(20)</li>
-      <li><span class="text-cyan-400">◆</span> Population INT</li>
-    </ul>
-  </div>
-
-  <div id="box-countrylanguage" class="entity p-3 rounded-lg w-72 absolute left-1/2 -translate-x-1/2 top-8">
-    <strong class="block">countrylanguage</strong>
-    <hr class="border-gray-600 my-2">
-    <ul class="text-xs md:text-sm text-gray-300 space-y-1">
-      <li><span class="text-yellow-400">◆</span> CountryCode CHAR(3)</li>
-      <li><span class="text-cyan-400">◆</span> Language CHAR(30)</li>
-      <li><span class="text-cyan-400">◆</span> IsOfficial ENUM('T','F')</li>
-      <li><span class="text-cyan-400">◆</span> Percentage DECIMAL(4,1)</li>
-    </ul>
-  </div>
-
-  <div id="box-country" class="entity p-3 rounded-lg w-72 absolute right-4 top-8">
-    <strong class="block">country</strong>
-    <hr class="border-gray-600 my-2">
-    <ul class="text-xs md:text-sm text-gray-300 space-y-1 max-h-52 overflow-auto pr-2">
-      <li><span class="text-yellow-400">◆</span> Code CHAR(3)</li>
-      <li><span class="text-cyan-400">◆</span> Name CHAR(52)</li>
-      <li><span class="text-cyan-400">◆</span> Continent ENUM(...)</li>
-      <li><span class="text-cyan-400">◆</span> Region CHAR(26)</li>
-      <li><span class="text-cyan-400">◆</span> SurfaceArea DECIMAL(10,2)</li>
-      <li><span class="text-cyan-400">◆</span> IndepYear SMALLINT</li>
-      <li><span class="text-cyan-400">◆</span> Population INT</li>
-      <li><span class="text-cyan-400">◆</span> LifeExpectancy DECIMAL(3,1)</li>
-      <li><span class="text-cyan-400">◆</span> GNP DECIMAL(10,2)</li>
-      <li><span class="text-cyan-400">◆</span> GNPOld DECIMAL(10,2)</li>
-      <li><span class="text-cyan-400">◆</span> LocalName CHAR(45)</li>
-      <li><span class="text-cyan-400">◆</span> GovernmentForm CHAR(45)</li>
-      <li><span class="text-cyan-400">◆</span> HeadOfState CHAR(60)</li>
-      <li><span class="text-cyan-400">◆</span> Capital INT</li>
-      <li><span class="text-cyan-400">◆</span> Code2 CHAR(2)</li>
-    </ul>
-  </div>
-
-  <!-- SVG overlay with crow's-foot connectors -->
-  <svg class="absolute inset-0 pointer-events-none" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true">
-    <defs>
-      <g id="crowfoot" stroke="currentColor" stroke-width="2">
-        <!-- three prongs for many side -->
-        <path d="M0,-8 L12,0"/>
-        <path d="M0,0 L12,0"/>
-        <path d="M0,8 L12,0"/>
-      </g>
-      <g id="onebar" stroke="currentColor" stroke-width="2">
-        <path d="M0,-10 L0,10"/>
-      </g>
-    </defs>
-
-    <!-- City.CountryCode -> Country.Code (many-to-one, non-identifying dashed) -->
-    <line x1="240" y1="140" x2="720" y2="220" stroke="currentColor" stroke-width="2.5" stroke-dasharray="6 6"/>
-    <!-- crow's foot near City (many) -->
-    <use href="#crowfoot" x="228" y="140" />
-    <!-- one bar near Country (one) -->
-    <use href="#onebar" x="720" y="210" />
-
-    <!-- CountryLanguage.CountryCode -> Country.Code (many-to-one, solid) -->
-    <line x1="500" y1="140" x2="720" y2="170" stroke="currentColor" stroke-width="3"/>
-    <use href="#crowfoot" x="488" y="140" />
-    <use href="#onebar" x="720" y="160" />
-
-    <!-- Optional labels -->
-    <text x="320" y="128" font-size="12" fill="#9CA3AF">N</text>
-    <text x="700" y="205" font-size="12" fill="#9CA3AF">1</text>
-    <text x="560" y="128" font-size="12" fill="#9CA3AF">N</text>
-    <text x="700" y="155" font-size="12" fill="#9CA3AF">1</text>
-  </svg>
-</div>
-<p class="text-sm text-gray-400 mt-3">Example based on MySQL's classic <em>world</em> sample schema: <strong>city</strong> and <strong>countrylanguage</strong> each reference <strong>country(Code)</strong>. Crow's feet indicate the <em>many</em> side; a single bar indicates the <em>one</em> side.</p>
+                    <p>The schema is often visualised with an <strong>Entity-Relationship (ER) diagram</strong>. Below is a more detailed example of an ER diagram showing users, articles, tags, and their relationships.</p>
+                    <img src="https://graphql-engine-cdn.hasura.io/learn-hasura/assets/database-mssql/er-diagram/ER-diagram.png" alt="ER Diagram Example" class="mt-4 rounded-lg w-full h-auto bg-white p-2">
                 </div>
             </div>
 
@@ -210,9 +128,9 @@
                 </div>
                 <div id="panel-keys" class="content-panel">
                     <div class="flex flex-wrap gap-2 mb-4">
-                        <button class="tab-btn active px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab(event, 'keys', 'pk')">PRIMARY KEY</button>
-                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab(event, 'keys', 'fk')">FOREIGN KEY</button>
-                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab(event, 'keys', 'other')">Others</button>
+                        <button class="tab-btn active px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('keys', 'pk')">PRIMARY KEY</button>
+                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('keys', 'fk')">FOREIGN KEY</button>
+                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('keys', 'other')">Others</button>
                     </div>
                     <div id="keys-content-pk" class="tab-content">
                         <h3 class="font-bold text-amber-300">PRIMARY KEY</h3>
@@ -280,25 +198,25 @@
                 </div>
                 <div id="panel-sql" class="content-panel">
                     <div class="flex flex-wrap gap-2 mb-4">
-                        <button class="tab-btn active px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab(event, 'sql', 'ddl')">DDL</button>
-                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab(event, 'sql', 'dml')">DML</button>
-                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab(event, 'sql', 'dcl')">DCL</button>
-                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab(event, 'sql', 'tcl')">TCL</button>
+                        <button class="tab-btn active px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('sql', 'ddl')">Data Definition</button>
+                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('sql', 'dml')">Data Manipulation</button>
+                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('sql', 'dcl')">Data Control</button>
+                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('sql', 'tcl')">Transaction Control</button>
                     </div>
                     <div id="sql-content-ddl" class="tab-content">
-                        <h3 class="font-bold text-cyan-300">Data Definition Language (DDL)</h3>
+                        <h3 class="font-bold text-cyan-300">Data Definition</h3>
                         <p>Commands for defining and managing database objects. Examples: <code class="bg-gray-900 px-1 rounded">CREATE</code>, <code class="bg-gray-900 px-1 rounded">ALTER</code>, <code class="bg-gray-900 px-1 rounded">DROP</code>.</p>
                     </div>
                     <div id="sql-content-dml" class="tab-content hidden">
-                        <h3 class="font-bold text-cyan-300">Data Manipulation Language (DML)</h3>
+                        <h3 class="font-bold text-cyan-300">Data Manipulation</h3>
                         <p>Commands for querying and modifying data. Examples: <code class="bg-gray-900 px-1 rounded">SELECT</code>, <code class="bg-gray-900 px-1 rounded">INSERT</code>, <code class="bg-gray-900 px-1 rounded">UPDATE</code>, <code class="bg-gray-900 px-1 rounded">DELETE</code>.</p>
                     </div>
                     <div id="sql-content-dcl" class="tab-content hidden">
-                        <h3 class="font-bold text-cyan-300">Data Control Language (DCL)</h3>
+                        <h3 class="font-bold text-cyan-300">Data Control</h3>
                         <p>Commands for managing user permissions. Examples: <code class="bg-gray-900 px-1 rounded">GRANT</code>, <code class="bg-gray-900 px-1 rounded">REVOKE</code>.</p>
                     </div>
                     <div id="sql-content-tcl" class="tab-content hidden">
-                        <h3 class="font-bold text-cyan-300">Transaction Control Language (TCL)</h3>
+                        <h3 class="font-bold text-cyan-300">Transaction Control</h3>
                         <p>Commands for managing transactions. Examples: <code class="bg-gray-900 px-1 rounded">COMMIT</code>, <code class="bg-gray-900 px-1 rounded">ROLLBACK</code>.</p>
                     </div>
                 </div>
@@ -353,8 +271,8 @@
             }
         }
 
-        // Function to handle tabbed content (fixed: pass event explicitly)
-        function showTab(evt, category, tabId) {
+        // Function to handle tabbed content
+        function showTab(category, tabId) {
             // Get all content divs for the category and hide them
             const contentDivs = document.querySelectorAll(`[id^="${category}-content-"]`);
             contentDivs.forEach(div => {
@@ -374,8 +292,9 @@
             }
 
             // Activate the clicked button
-            if (evt && evt.currentTarget) {
-                evt.currentTarget.classList.add('active');
+            const clickedButton = event.target;
+            if (clickedButton) {
+                clickedButton.classList.add('active');
             }
         }
     </script>
