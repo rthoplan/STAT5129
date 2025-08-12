@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relational Databases: Core Ideas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* bg-gray-900 */
+            color: #f3f4f6; /* text-gray-200 */
+        }
+        .card {
+            background-color: #1f2937; /* bg-gray-800 */
+            border: 1px solid #374151; /* border-gray-700 */
+            transition: all 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+        .content-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+            padding: 0 1.5rem;
+        }
+        .content-panel.open {
+            max-height: 550px; /* Increased height */
+            padding: 1.5rem;
+        }
+        .tab-btn {
+            transition: all 0.2s ease;
+        }
+        .tab-btn.active {
+            background-color: #3b82f6; /* bg-blue-600 */
+            color: #ffffff;
+        }
+        .glossary-term summary {
+            cursor: pointer;
+            outline: none;
+        }
+        .glossary-term[open] summary {
+            color: #60a5fa; /* text-blue-400 */
+        }
+        /* ER Diagram styles */
+        .entity {
+            border: 2px solid #4b5563; /* border-gray-600 */
+            background-color: #374151; /* bg-gray-700 */
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        .relationship-line {
+            transition: all 0.3s ease;
+            background-color: #4b5563; /* bg-gray-600 */
+        }
+        .er-diagram-container:hover .entity-student {
+            border-color: #3b82f6;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+        .er-diagram-container:hover .entity-course {
+            border-color: #10b981;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+        .er-diagram-container:hover .entity-enrollment {
+            border-color: #f59e0b;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+        }
+        .er-diagram-container:hover .line-student-enroll {
+            background-color: #3b82f6;
+        }
+        .er-diagram-container:hover .line-course-enroll {
+            background-color: #10b981;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-white">Relational Databases: Core Ideas</h1>
+            <p class="text-lg text-gray-400 mt-2">Click on the cards below to explore each concept.</p>
+        </header>
+
+        <!-- Core Ideas Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Card: Tables -->
+            <div class="card rounded-lg overflow-hidden">
+                <div class="p-6 cursor-pointer" onclick="togglePanel('panel-tables')">
+                    <h2 class="text-2xl font-semibold text-blue-400">Tables (Relations)</h2>
+                    <p class="text-gray-400 mt-2">The fundamental structure for storing data.</p>
+                </div>
+                <div id="panel-tables" class="content-panel">
+                    <p>Tables are made of rows (also called <strong>tuples</strong>) and columns (also called <strong>attributes</strong>). Each column has a defined data type, like text, number, or date.</p>
+                    <div class="mt-4 p-3 bg-gray-900 rounded-lg text-sm font-mono whitespace-pre">
+<span class="text-green-400">Users Table</span>
++----+----------+---------------------+
+| id | username | email               |
++----+----------+---------------------+
+| 1  | alice    | alice@example.com   | <span class="text-gray-500">&lt;-- Row/Tuple</span>
++----+----------+---------------------+
+                   <span class="text-gray-500">^ Column/Attribute</span></div>
+                </div>
+            </div>
+
+            <!-- Card: Schema -->
+            <div class="card rounded-lg overflow-hidden">
+                <div class="p-6 cursor-pointer" onclick="togglePanel('panel-schema')">
+                    <h2 class="text-2xl font-semibold text-emerald-400">Schema & ER Diagrams</h2>
+                    <p class="text-gray-400 mt-2">The blueprint of the database.</p>
+                </div>
+                <div id="panel-schema" class="content-panel">
+                    <p>The schema is often visualized with an <strong>Entity-Relationship (ER) diagram</strong>. Below is an example of a many-to-many relationship between Students and Courses, linked by an Enrollments junction table.</p>
+                    <div class="mt-4 p-4 bg-gray-900 rounded-lg er-diagram-container">
+                        <div class="relative grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center text-center gap-x-1 md:gap-x-2 h-40">
+                            <!-- Student Entity -->
+                            <div class="entity entity-student p-2 rounded-lg w-full">
+                                <strong>Students</strong>
+                                <hr class="border-gray-600 my-1">
+                                <small class="text-gray-400">PK: student_id</small>
+                            </div>
+
+                            <!-- Line 1 -->
+                            <div class="relative w-full text-center">
+                                <div class="h-0.5 relationship-line line-student-enroll"></div>
+                                <div class="absolute -top-3 left-1 text-xs text-gray-400">1</div>
+                                <div class="absolute -top-3 right-1 text-xs text-gray-400">*</div>
+                            </div>
+
+                            <!-- Enrollment Junction Table -->
+                            <div class="entity entity-enrollment p-2 rounded-lg w-full">
+                                <strong>Enrollments</strong>
+                                <hr class="border-gray-600 my-1">
+                                <small class="text-gray-400 block text-xs md:text-sm">FK: student_id</small>
+                                <small class="text-gray-400 block text-xs md:text-sm">FK: course_id</small>
+                            </div>
+
+                            <!-- Line 2 -->
+                             <div class="relative w-full text-center">
+                                <div class="h-0.5 relationship-line line-course-enroll"></div>
+                                <div class="absolute -top-3 left-1 text-xs text-gray-400">*</div>
+                                <div class="absolute -top-3 right-1 text-xs text-gray-400">1</div>
+                            </div>
+
+                            <!-- Course Entity -->
+                            <div class="entity entity-course p-2 rounded-lg w-full">
+                                <strong>Courses</strong>
+                                <hr class="border-gray-600 my-1">
+                                <small class="text-gray-400">PK: course_id</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card: Keys & Constraints -->
+            <div class="card rounded-lg overflow-hidden">
+                <div class="p-6 cursor-pointer" onclick="togglePanel('panel-keys')">
+                    <h2 class="text-2xl font-semibold text-amber-400">Keys & Constraints</h2>
+                    <p class="text-gray-400 mt-2">Rules that enforce data quality and integrity.</p>
+                </div>
+                <div id="panel-keys" class="content-panel">
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <button class="tab-btn active px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('keys', 'pk')">PRIMARY KEY</button>
+                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('keys', 'fk')">FOREIGN KEY</button>
+                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('keys', 'other')">Others</button>
+                    </div>
+                    <div id="keys-content-pk" class="tab-content">
+                        <h3 class="font-bold text-amber-300">PRIMARY KEY</h3>
+                        <p>A column (or set of columns) that uniquely identifies each row in a table. It cannot contain NULL values.</p>
+                    </div>
+                    <div id="keys-content-fk" class="tab-content hidden">
+                        <h3 class="font-bold text-amber-300">FOREIGN KEY</h3>
+                        <p>A column (or set of columns) in one table that refers to the PRIMARY KEY in another table. It creates a link between the two tables.</p>
+                    </div>
+                    <div id="keys-content-other" class="tab-content hidden">
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong class="text-amber-300">UNIQUE:</strong> Ensures all values in a column are different.</li>
+                            <li><strong class="text-amber-300">NOT NULL:</strong> Ensures a column cannot have a NULL value.</li>
+                            <li><strong class="text-amber-300">CHECK:</strong> Ensures that all values in a column satisfy a specific condition.</li>
+                            <li><strong class="text-amber-300">DEFAULT:</strong> Sets a default value for a column when no value is specified.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card: Relationships -->
+            <div class="card rounded-lg overflow-hidden">
+                <div class="p-6 cursor-pointer" onclick="togglePanel('panel-relationships')">
+                    <h2 class="text-2xl font-semibold text-rose-400">Relationships</h2>
+                    <p class="text-gray-400 mt-2">How different tables connect to each other.</p>
+                </div>
+                <div id="panel-relationships" class="content-panel space-y-3">
+                    <div>
+                        <h3 class="font-semibold text-rose-300">One-to-One (1–1)</h3>
+                        <p class="text-sm">Each record in Table A relates to one and only one record in Table B. (e.g., a User and their UserProfile).</p>
+                    </div>
+                     <div>
+                        <h3 class="font-semibold text-rose-300">One-to-Many (1–Many)</h3>
+                        <p class="text-sm">One record in Table A can relate to many records in Table B, but each record in B relates to only one in A. (e.g., one User can have many Posts).</p>
+                    </div>
+                     <div>
+                        <h3 class="font-semibold text-rose-300">Many-to-Many (Many–Many)</h3>
+                        <p class="text-sm">Many records in Table A can relate to many records in Table B. This requires a third table, called a <strong>junction table</strong>, to link them. (e.g., Students and Courses).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card: ACID Properties -->
+            <div class="card rounded-lg overflow-hidden">
+                <div class="p-6 cursor-pointer" onclick="togglePanel('panel-acid')">
+                    <h2 class="text-2xl font-semibold text-violet-400">ACID Properties</h2>
+                    <p class="text-gray-400 mt-2">Guarantees for reliable database transactions.</p>
+                </div>
+                <div id="panel-acid" class="content-panel space-y-3">
+                    <p>ACID properties ensure that database transactions are processed reliably. This is a key feature of systems like MySQL's InnoDB engine.</p>
+                    <ul class="list-disc list-inside space-y-2 mt-2">
+                        <li><strong>Atomicity:</strong> Transactions are "all or nothing." If one part fails, the entire transaction is rolled back.</li>
+                        <li><strong>Consistency:</strong> A transaction brings the database from one valid state to another, preserving all rules.</li>
+                        <li><strong>Isolation:</strong> Concurrent transactions produce the same result as if they were executed one after another.</li>
+                        <li><strong>Durability:</strong> Once a transaction is committed, it will remain so, even in the event of a power loss or crash.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Card: SQL Families -->
+            <div class="card rounded-lg overflow-hidden">
+                <div class="p-6 cursor-pointer" onclick="togglePanel('panel-sql')">
+                    <h2 class="text-2xl font-semibold text-cyan-400">SQL Families</h2>
+                    <p class="text-gray-400 mt-2">Categories of SQL commands.</p>
+                </div>
+                <div id="panel-sql" class="content-panel">
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <button class="tab-btn active px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('sql', 'ddl')">DDL</button>
+                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('sql', 'dml')">DML</button>
+                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('sql', 'dcl')">DCL</button>
+                        <button class="tab-btn px-3 py-1 bg-gray-700 rounded-md text-sm" onclick="showTab('sql', 'tcl')">TCL</button>
+                    </div>
+                    <div id="sql-content-ddl" class="tab-content">
+                        <h3 class="font-bold text-cyan-300">Data Definition Language (DDL)</h3>
+                        <p>Commands for defining and managing database objects. Examples: <code class="bg-gray-900 px-1 rounded">CREATE</code>, <code class="bg-gray-900 px-1 rounded">ALTER</code>, <code class="bg-gray-900 px-1 rounded">DROP</code>.</p>
+                    </div>
+                    <div id="sql-content-dml" class="tab-content hidden">
+                        <h3 class="font-bold text-cyan-300">Data Manipulation Language (DML)</h3>
+                        <p>Commands for querying and modifying data. Examples: <code class="bg-gray-900 px-1 rounded">SELECT</code>, <code class="bg-gray-900 px-1 rounded">INSERT</code>, <code class="bg-gray-900 px-1 rounded">UPDATE</code>, <code class="bg-gray-900 px-1 rounded">DELETE</code>.</p>
+                    </div>
+                    <div id="sql-content-dcl" class="tab-content hidden">
+                        <h3 class="font-bold text-cyan-300">Data Control Language (DCL)</h3>
+                        <p>Commands for managing user permissions. Examples: <code class="bg-gray-900 px-1 rounded">GRANT</code>, <code class="bg-gray-900 px-1 rounded">REVOKE</code>.</p>
+                    </div>
+                    <div id="sql-content-tcl" class="tab-content hidden">
+                        <h3 class="font-bold text-cyan-300">Transaction Control Language (TCL)</h3>
+                        <p>Commands for managing transactions. Examples: <code class="bg-gray-900 px-1 rounded">COMMIT</code>, <code class="bg-gray-900 px-1 rounded">ROLLBACK</code>.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Glossary Section -->
+        <div class="mt-12 card rounded-lg p-6">
+            <h2 class="text-3xl font-bold text-white mb-4">Glossary</h2>
+            <div class="space-y-4">
+                <details class="glossary-term border-b border-gray-700 pb-2">
+                    <summary class="font-semibold text-lg">Entity/Attribute</summary>
+                    <p class="mt-2 text-gray-300 pl-4">An <strong>entity</strong> is a real-world object or concept we want to store data about (e.g., a customer, a product). Its <strong>attributes</strong> are its properties or characteristics (e.g., customer name, product price).</p>
+                </details>
+                <details class="glossary-term border-b border-gray-700 pb-2">
+                    <summary class="font-semibold text-lg">ER Diagram</summary>
+                    <p class="mt-2 text-gray-300 pl-4">A picture showing entities and their relationships. It's a visual blueprint for the database structure.</p>
+                </details>
+                <details class="glossary-term border-b border-gray-700 pb-2">
+                    <summary class="font-semibold text-lg">Primary Key (PK)</summary>
+                    <p class="mt-2 text-gray-300 pl-4">A column (or combination of columns) that uniquely identifies a row in a table. It cannot be empty.</p>
+                </details>
+                <details class="glossary-term border-b border-gray-700 pb-2">
+                    <summary class="font-semibold text-lg">Foreign Key (FK)</summary>
+                    <p class="mt-2 text-gray-300 pl-4">A column (or combination of columns) that refers to a Primary Key in another table, creating a link.</p>
+                </details>
+                <details class="glossary-term border-b border-gray-700 pb-2">
+                    <summary class="font-semibold text-lg">Junction Table</summary>
+                    <p class="mt-2 text-gray-300 pl-4">A special table used to connect two other tables in a many-to-many relationship. It contains foreign keys from both tables it links.</p>
+                </details>
+                <details class="glossary-term border-b border-gray-700 pb-2">
+                    <summary class="font-semibold text-lg">ACID</summary>
+                    <p class="mt-2 text-gray-300 pl-4">The safety guarantees for transactions: Atomicity, Consistency, Isolation, Durability.</p>
+                </details>
+                <details class="glossary-term pb-2">
+                    <summary class="font-semibold text-lg">DDL/DML/DCL/TCL</summary>
+                    <p class="mt-2 text-gray-300 pl-4">The main categories of SQL commands used to define, manipulate, control, and manage transactions in a database.</p>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- SCRIPT FOR INTERACTIVITY ---
+
+        // Function to toggle the collapsible content panels
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            if (panel) {
+                panel.classList.toggle('open');
+            }
+        }
+
+        // Function to handle tabbed content
+        function showTab(category, tabId) {
+            // Get all content divs for the category and hide them
+            const contentDivs = document.querySelectorAll(`[id^="${category}-content-"]`);
+            contentDivs.forEach(div => {
+                div.classList.add('hidden');
+            });
+
+            // Get all buttons for the category and deactivate them
+            const buttons = document.querySelectorAll(`#panel-${category} .tab-btn`);
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show the selected content
+            const selectedContent = document.getElementById(`${category}-content-${tabId}`);
+            if (selectedContent) {
+                selectedContent.classList.remove('hidden');
+            }
+
+            // Activate the clicked button
+            const clickedButton = event.target;
+            if (clickedButton) {
+                clickedButton.classList.add('active');
+            }
+        }
+    </script>
+
+</body>
+</html>
