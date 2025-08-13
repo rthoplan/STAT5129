@@ -61,7 +61,7 @@
 
             <!-- Step 2: What is JSON? -->
             <div id="step-2" class="step">
-                <h2 class="text-2xl font-bold mb-2">Step 1: JSON (The Flexible Organizer 🗂️)</h2>
+                <h2 class="text-2xl font-bold mb-2">Step 1: JSON (The Flexible Organiser 🗂️)</h2>
                 <p class="text-gray-600 mb-4">JSON stores data in <span class="font-semibold text-blue-600">key-value</span> pairs. It's great for data with nested structures, like a user profile. It's human-readable and the standard for web APIs.</p>
                 <div class="bg-gray-900 text-white p-4 rounded-lg text-sm md:text-base font-mono whitespace-pre-wrap" id="json-container">
 <pre>{
@@ -85,7 +85,7 @@
             <!-- Step 3: The Problem for Analytics -->
             <div id="step-3" class="step">
                 <h2 class="text-2xl font-bold mb-2">The Problem: Reading Row-by-Row</h2>
-                <p class="text-gray-600 mb-4">JSON and CSV are **row-based**. To find all values in one column (e.g., `eventType`), the computer must read through every single row from top to bottom. This is slow for big data.</p>
+                <p class="text-gray-600 mb-4">JSON and CSV are row-based. To find all values in one column (e.g., `eventType`), the computer must read through every single row from top to bottom. This is slow for big data.</p>
                 <p class="text-gray-600 mb-4">Imagine we want to find how many "add_to_cart" events happened. Watch how much data we have to scan.</p>
                 <div id="row-based-viz" class="space-y-1">
                     <!-- This will be populated by JS -->
@@ -96,7 +96,7 @@
             <!-- Step 4: What is Parquet? -->
             <div id="step-4" class="step">
                 <h2 class="text-2xl font-bold mb-2">Step 2: Parquet (The High-Performance Warehouse 🏢)</h2>
-                <p class="text-gray-600 mb-4">Parquet is **columnar**. It stores all values for a single column together. It's not human-readable but is extremely fast for analytics.</p>
+                <p class="text-gray-600 mb-4">Parquet is columnar. It stores all values for a single column together. It's not human-readable but is extremely fast for analytics.</p>
                 <p class="text-gray-600 mb-4">Now, let's find all "add_to_cart" events. Notice we only need to read ONE block of data!</p>
                 <div id="column-based-viz" class="grid grid-cols-3 md:grid-cols-5 gap-2 text-center text-xs md:text-sm">
                     <!-- This will be populated by JS -->
