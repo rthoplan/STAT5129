@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Interactive JSON Explainer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #111827; /* Fallback */
+            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            color: #d1d5db; /* text-gray-300 */
+        }
+        .font-fira {
+            font-family: 'Fira Code', monospace;
+        }
+        .json-viewer .highlight {
+            background-color: #374151; /* bg-gray-700 */
+            border-radius: 4px;
+            cursor: pointer;
+            outline: 2px solid #f59e0b; /* amber-500 */
+        }
+        .json-viewer .clickable {
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+        }
+        .json-viewer .clickable:hover {
+            background-color: #1f2937; /* bg-gray-800 */
+            transform: scale(1.02);
+        }
+        .key { color: #93c5fd; } /* text-blue-300 */
+        .string { color: #a7f3d0; } /* text-emerald-200 */
+        .number { color: #f9a8d4; } /* text-pink-300 */
+        .brace { color: #f59e0b; } /* text-amber-500 */
+        .bracket { color: #818cf8; } /* text-indigo-400 */
+        .comma { color: #6b7280; } /* text-gray-500 */
+
+        #tooltip {
+            position: absolute;
+            display: none;
+            padding: 8px 12px;
+            background-color: #0d1117;
+            color: #e5e7eb;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            pointer-events: none; /* So it doesn't interfere with mouse events */
+            z-index: 100;
+            transition: opacity 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8">
+    <div id="tooltip"></div>
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-white tracking-tight">Enhanced Interactive JSON Explainer</h1>
+            <p class="mt-3 text-lg text-gray-400">Hover for a quick hint, click for a detailed explanation.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- JSON Viewer Column -->
+            <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl shadow-2xl border border-gray-700">
+                <h2 class="text-2xl font-semibold text-white mb-4">JSON Data Viewer</h2>
+                <div id="json-viewer" class="font-fira text-sm sm:text-base p-4 bg-[#0d1117] rounded-lg overflow-x-auto">
+                    <!-- JSON will be rendered here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Explanation Column -->
+            <div id="explanation-container" class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl shadow-2xl border border-gray-700 h-fit sticky top-8">
+                 <h2 class="text-2xl font-semibold text-white mb-4">What is this?</h2>
+                <div id="explanation-content" class="space-y-4">
+                   <div class="p-4 bg-gray-700/50 rounded-lg">
+                        <h3 class="font-bold text-lg text-amber-400">Welcome!</h3>
+                        <p class="text-gray-300 mt-1">Select an element from the JSON on the left to get a detailed explanation here. You can hover over elements for a quick tip.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const jsonData = [
+            {
+                "year":2025,
+                "monthly_data":[
+                    {"month":"January","district":"Quatre Bornes","tourist_arrivals":5824,"average_hotel_rate_MUR":6918.18,"rainfall_mm":386.9,"electricity_consumption_MWh":1571},
+                    {"month":"February","district":"Quatre Bornes","tourist_arrivals":5899,"average_hotel_rate_MUR":4099.2,"rainfall_mm":12.2,"electricity_consumption_MWh":2733},
+                    {"month":"March","district":"Mahebourg","tourist_arrivals":3978,"average_hotel_rate_MUR":3790.76,"rainfall_mm":51.7,"electricity_consumption_MWh":2395},
+                    {"month":"April","district":"Quatre Bornes","tourist_arrivals":7180,"average_hotel_rate_MUR":6880.64,"rainfall_mm":314.6,"electricity_consumption_MWh":554},
+                    {"month":"May","district":"Port Louis","tourist_arrivals":1703,"average_hotel_rate_MUR":4829.41,"rainfall_mm":297.0,"electricity_consumption_MWh":550},
+                    {"month":"June","district":"Vacoas-Phoenix","tourist_arrivals":4605,"average_hotel_rate_MUR":7121.4,"rainfall_mm":211.1,"electricity_consumption_MWh":1859},
+                    {"month":"July","district":"Mahebourg","tourist_arrivals":6388,"average_hotel_rate_MUR":3082.34,"rainfall_mm":90.6,"electricity_consumption_MWh":2179},
+                    {"month":"August","district":"Rose Hill","tourist_arrivals":5709,"average_hotel_rate_MUR":5240.16,"rainfall_mm":378.9,"electricity_consumption_MWh":1214},
+                    {"month":"September","district":"Vacoas-Phoenix","tourist_arrivals":3298,"average_hotel_rate_MUR":5692.24,"rainfall_mm":51.6,"electricity_consumption_MWh":657},
+                    {"month":"October","district":"Rose Hill","tourist_arrivals":7066,"average_hotel_rate_MUR":7115.87,"rainfall_mm":271.9,"electricity_consumption_MWh":790},
+                    {"month":"November","district":"Quatre Bornes","tourist_arrivals":4093,"average_hotel_rate_MUR":2671.51,"rainfall_mm":113.1,"electricity_consumption_MWh":2865},
+                    {"month":"December","district":"Mahebourg","tourist_arrivals":5463,"average_hotel_rate_MUR":7111.29,"rainfall_mm":322.0,"electricity_consumption_MWh":2846}
+                ]
+            }
+        ];
+
+        const explanations = {
+            'default': {
+                title: 'Welcome!',
+                description: 'Select an element from the JSON on the left to get a detailed explanation here. You can hover over elements for a quick tip.'
+            },
+            'array': {
+                title: 'Array [ ]',
+                description: "This is an <strong>Array</strong>, which is an ordered list of values. It's defined by square brackets <code>[]</code>. In this file, there are two arrays: one is the main container for all the data, and the other is a list of monthly records inside the <code>monthly_data</code> key."
+            },
+            'object': {
+                title: 'Object { }',
+                description: "This is an <strong>Object</strong>, a collection of key-value pairs that represent a single entity. It's defined by curly braces <code>{}</code>. Each object here represents either the data for the entire year or the data for a single month."
+            },
+            'key': {
+                title: 'Key',
+                description: "This is a <strong>Key</strong>. It's a string in double quotes that acts as a name or identifier for a value. Think of it as a label for a piece of data."
+            },
+            'string': {
+                title: 'String Value',
+                description: "This is a <strong>String</strong> value. A string is a sequence of characters, like text. In JSON, strings are always enclosed in double quotes."
+            },
+            'number': {
+                title: 'Number Value',
+                description: "This is a <strong>Number</strong> value. It can be an integer (a whole number) or a floating-point number (a decimal). Numbers are not enclosed in quotes."
+            },
+            'year': { title: 'Key: "year"', description: 'This key represents the calendar year for which the data was collected.' },
+            'monthly_data': { title: 'Key: "monthly_data"', description: 'This key holds an array of objects, where each object contains detailed statistics for a specific month.' },
+            'month': { title: 'Key: "month"', description: 'The month the data was recorded for (e.g., "January").' },
+            'district': { title: 'Key: "district"', description: 'The specific district in Mauritius the data pertains to.' },
+            'tourist_arrivals': { title: 'Key: "tourist_arrivals"', description: 'The total number of tourists who arrived in that district during the month.' },
+            'average_hotel_rate_MUR': { title: 'Key: "average_hotel_rate_MUR"', description: 'The average cost of a hotel room in Mauritian Rupees (MUR) for the month.' },
+            'rainfall_mm': { title: 'Key: "rainfall_mm"', description: 'The total rainfall for the month, measured in millimeters (mm).' },
+            'electricity_consumption_MWh': { title: 'Key: "electricity_consumption_MWh"', description: 'The total electricity used in the district, measured in Megawatt-hours (MWh).' }
+        };
+
+        const jsonViewer = document.getElementById('json-viewer');
+        const explanationContent = document.getElementById('explanation-content');
+        const tooltip = document.getElementById('tooltip');
+        let currentHighlight = null;
+
+        function renderExplanation(key) {
+            const explanation = explanations[key] || explanations['default'];
+            explanationContent.innerHTML = `
+                <div class="p-4 bg-gray-700/50 rounded-lg animate-fade-in">
+                    <h3 class="font-bold text-lg text-amber-400">${explanation.title}</h3>
+                    <p class="text-gray-300 mt-1">${explanation.description}</p>
+                </div>
+            `;
+            const newContent = explanationContent.firstElementChild;
+            newContent.style.animation = 'fadeIn 0.5s ease-in-out';
+        }
+        
+        const styleSheet = document.createElement("style");
+        styleSheet.type = "text/css";
+        styleSheet.innerText = `@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }`;
+        document.head.appendChild(styleSheet);
+
+        function syntaxHighlight(json) {
+            if (typeof json != 'string') {
+                json = JSON.stringify(json, undefined, 2);
+            }
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'number';
+                let dataType = 'number';
+                let specificKey = '';
+
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                        dataType = 'key';
+                        specificKey = match.replace(/["\s:]/g, '');
+                    } else {
+                        cls = 'string';
+                        dataType = 'string';
+                    }
+                }
+                
+                const dataAttributes = `data-type="${dataType}" ${specificKey ? `data-key="${specificKey}"` : ''}`;
+                const elementTag = (dataType === 'key') ? 'span' : 'span';
+
+                if (dataType === 'key') {
+                    const keyPart = match.slice(0, -1);
+                    return `<${elementTag} class="clickable" ${dataAttributes}>${keyPart}</${elementTag}>:`;
+                }
+                
+                return `<${elementTag} class="clickable ${cls}" ${dataAttributes}>${match}</${elementTag}>`;
+            })
+            .replace(/\{/g, '<span class="clickable brace" data-type="object">{</span>')
+            .replace(/\}/g, '<span class="clickable brace" data-type="object">}</span>')
+            .replace(/\[/g, '<span class="clickable bracket" data-type="array">[</span>')
+            .replace(/\]/g, '<span class="clickable bracket" data-type="array">]</span>')
+            .replace(/,/g, '<span class="comma">,</span>');
+        }
+
+        jsonViewer.innerHTML = syntaxHighlight(jsonData);
+
+        jsonViewer.addEventListener('click', function(e) {
+            const target = e.target.closest('.clickable');
+            if (target) {
+                if (currentHighlight) {
+                    currentHighlight.classList.remove('highlight');
+                }
+                target.classList.add('highlight');
+                currentHighlight = target;
+
+                const dataType = target.dataset.type;
+                const specificKey = target.dataset.key;
+                
+                renderExplanation(specificKey || dataType);
+            }
+        });
+
+        jsonViewer.addEventListener('mouseover', function(e) {
+            const target = e.target.closest('.clickable');
+            if (target) {
+                const dataType = target.dataset.type;
+                const specificKey = target.dataset.key;
+                const explanation = explanations[specificKey || dataType];
+                if (explanation) {
+                    tooltip.innerHTML = explanation.title;
+                    tooltip.style.display = 'block';
+                }
+            }
+        });
+        
+        jsonViewer.addEventListener('mousemove', function(e) {
+            if (tooltip.style.display === 'block') {
+                // Position tooltip above and to the right of the cursor
+                tooltip.style.left = e.pageX + 15 + 'px';
+                tooltip.style.top = e.pageY - 30 + 'px';
+            }
+        });
+
+        jsonViewer.addEventListener('mouseout', function(e) {
+            const target = e.target.closest('.clickable');
+            if (target) {
+                tooltip.style.display = 'none';
+            }
+        });
+        
+        renderExplanation('default');
+
+    </script>
+</body>
+</html>
