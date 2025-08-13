@@ -52,7 +52,7 @@
     <div class="max-w-7xl mx-auto">
         <header class="text-center mb-10">
             <h1 class="text-3xl sm:text-4xl font-bold text-white tracking-tight">Interactive Parquet Data Explainer</h1>
-            <p class="mt-3 text-lg text-indigo-200">Visualizing how Parquet stores data differently from JSON.</p>
+            <p class="mt-3 text-lg text-indigo-200">visualising how Parquet stores data differently from JSON.</p>
         </header>
 
         <!-- Main Content -->
@@ -80,7 +80,7 @@
                 </div>
             </div>
 
-            <!-- Step 2: Columnar Storage Visualization -->
+            <!-- Step 2: Columnar Storage visualisation -->
             <div>
                  <h2 class="text-2xl font-semibold text-white mb-4"><span class="bg-indigo-500 rounded-full px-3 py-1 mr-2">2</span> How Parquet Actually Stores It (Columns)</h2>
                  <p class="text-indigo-200 mb-6">This is the magic of Parquet. Instead of rows, it groups all values from a single column together. This makes compression and querying super efficient. Click a column block to see the explanation.</p>
@@ -127,7 +127,7 @@
         const explanations = {
             default: {
                 title: 'Welcome to the Parquet Explainer!',
-                text: 'Click on a column header in the table or a colored block below to learn about how Parquet organizes data for maximum efficiency.'
+                text: 'Click on a column header in the table or a colored block below to learn about how Parquet organises data for maximum efficiency.'
             },
             month: {
                 title: 'Column: Month (STRING)',
@@ -151,7 +151,7 @@
             },
             electricity_consumption_MWh: {
                 title: 'Column: Electricity (INT64)',
-                text: 'This column contains integer values for electricity consumption. Storing them together allows for specialized compression algorithms for numbers, saving space and speeding up read times.'
+                text: 'This column contains integer values for electricity consumption. Storing them together allows for specialised compression algorithms for numbers, saving space and speeding up read times.'
             }
         };
 
