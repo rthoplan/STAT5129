@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API URL Anatomy Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .api-url {
+            word-break: break-all;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            line-height: 1.6;
+        }
+        .url-part {
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .base { background-color: #dbeafe; }
+        .path { background-color: #c7d2fe; }
+        .query { background-color: #ddd6fe; }
+        .param-key { color: #9333ea; font-weight: 600; }
+        .param-value { color: #1d4ed8; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-gray-900">API URL Anatomy Explorer 🗺️</h1>
+            <p class="mt-2 text-lg text-gray-600">An interactive guide to building API requests.</p>
+        </header>
+
+        <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3">What's an API URL?</h2>
+            <p class="text-gray-700">Think of it like a structured sentence you say to a data server. You tell it where to look (the <span class="font-semibold text-blue-600">base</span>), what you want (the <span class="font-semibold text-indigo-600">resource path</span>), and any specific details (the <span class="font-semibold text-purple-600">query parameters</span>). The server then replies with the data you asked for, usually in a machine-readable format like JSON.</p>
+            <div class="mt-4 text-center text-lg font-medium">
+                <span class="url-part base">base</span> + 
+                <span class="url-part path">resource path</span> + 
+                <span class="url-part query">?key=value&key=value</span> → 
+                <span class="font-bold text-green-600">Dataset</span>
+            </div>
+        </div>
+
+        <!-- World Bank API Section -->
+        <div id="world-bank" class="mb-12">
+            <h2 class="text-3xl font-bold mb-4 text-gray-800 border-b pb-2">World Bank (WDI) — Indicators API</h2>
+            <p class="mb-6 text-gray-600">Goal: Get economic and population data for different countries. Find codes and explore options in the <a href="https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation" target="_blank" class="text-blue-600 hover:underline">official API documentation</a>.</p>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h3 class="text-xl font-semibold mb-4">Build Your URL</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="wb-country" class="block text-sm font-medium text-gray-700">Country (ISO-2 Code)</label>
+                            <select id="wb-country" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="MU">Mauritius</option>
+                                <option value="US">United States</option>
+                                <option value="CN">China</option>
+                                <option value="ZA">South Africa</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="wb-indicator" class="block text-sm font-medium text-gray-700">Indicator</label>
+                            <select id="wb-indicator" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="SP.POP.TOTL">Population, total</option>
+                                <option value="NY.GDP.MKTP.CD">GDP (current US$)</option>
+                                <option value="EN.ATM.CO2E.KT">CO2 emissions (kt)</option>
+                                <option value="SP.DYN.LE00.IN">Life expectancy at birth (years)</option>
+                                <option value="SL.UEM.TOTL.ZS">Unemployment, total (% of labor force)</option>
+                                <option value="IT.NET.USER.ZS">Internet users (% of population)</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="wb-start-date" class="block text-sm font-medium text-gray-700">Start Year</label>
+                                <input type="number" id="wb-start-date" value="2010" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                            </div>
+                            <div>
+                                <label for="wb-end-date" class="block text-sm font-medium text-gray-700">End Year</label>
+                                <input type="number" id="wb-end-date" value="2024" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- URL Display -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h3 class="text-xl font-semibold mb-4">Generated URL</h3>
+                    <div id="wb-url" class="api-url text-sm"></div>
+                    <h3 class="text-xl font-semibold mt-6 mb-4">Anatomy Breakdown</h3>
+                    <div id="wb-breakdown" class="space-y-2 text-sm"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NASA POWER API Section -->
+        <div id="nasa">
+            <h2 class="text-3xl font-bold mb-4 text-gray-800 border-b pb-2">NASA POWER — Daily Meteorology API</h2>
+            <p class="mb-6 text-gray-600">Goal: Get daily weather and solar data for a specific location. Check the <a href="https://power.larc.nasa.gov/docs/tutorials/api-getting-started/" target="_blank" class="text-blue-600 hover:underline">API Getting Started guide</a> to learn how to make requests.</p>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h3 class="text-xl font-semibold mb-4">Build Your URL</h3>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="nasa-lat" class="block text-sm font-medium text-gray-700">Latitude</label>
+                                <input type="number" id="nasa-lat" value="-20.17" step="0.01" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                            </div>
+                            <div>
+                                <label for="nasa-lon" class="block text-sm font-medium text-gray-700">Longitude</label>
+                                <input type="number" id="nasa-lon" value="57.50" step="0.01" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Parameters</label>
+                            <div id="nasa-parameters" class="mt-2 grid grid-cols-2 gap-2">
+                                <label class="inline-flex items-center"><input type="checkbox" value="T2M" class="nasa-param" checked> <span class="ml-2">Air Temp (T2M)</span></label>
+                                <label class="inline-flex items-center"><input type="checkbox" value="PRECTOTCORR" class="nasa-param" checked> <span class="ml-2">Precipitation</span></label>
+                                <label class="inline-flex items-center"><input type="checkbox" value="ALLSKY_SFC_SW_DWN" class="nasa-param"> <span class="ml-2">Solar Irradiance</span></label>
+                                <label class="inline-flex items-center"><input type="checkbox" value="WS10M" class="nasa-param"> <span class="ml-2">Wind Speed 10m</span></label>
+                                <label class="inline-flex items-center"><input type="checkbox" value="RH2M" class="nasa-param"> <span class="ml-2">Relative Humidity</span></label>
+                                <label class="inline-flex items-center"><input type="checkbox" value="PS" class="nasa-param"> <span class="ml-2">Surface Pressure</span></label>
+                            </div>
+                        </div>
+                         <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="nasa-start-date" class="block text-sm font-medium text-gray-700">Start Date</label>
+                                <input type="date" id="nasa-start-date" value="2024-01-01" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                            </div>
+                            <div>
+                                <label for="nasa-end-date" class="block text-sm font-medium text-gray-700">End Date</label>
+                                <input type="date" id="nasa-end-date" value="2024-01-31" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="nasa-community" class="block text-sm font-medium text-gray-700">Community</label>
+                            <select id="nasa-community" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="AG">Agriculture (AG)</option>
+                                <option value="RE">Renewable Energy (RE)</option>
+                                <option value="SB">Sustainable Buildings (SB)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- URL Display -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h3 class="text-xl font-semibold mb-4">Generated URL</h3>
+                    <div id="nasa-url" class="api-url text-sm"></div>
+                    <h3 class="text-xl font-semibold mt-6 mb-4">Anatomy Breakdown</h3>
+                    <div id="nasa-breakdown" class="space-y-2 text-sm"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- World Bank API Logic ---
+        const wbCountry = document.getElementById('wb-country');
+        const wbIndicator = document.getElementById('wb-indicator');
+        const wbStartDate = document.getElementById('wb-start-date');
+        const wbEndDate = document.getElementById('wb-end-date');
+        const wbUrlDiv = document.getElementById('wb-url');
+        const wbBreakdownDiv = document.getElementById('wb-breakdown');
+
+        function updateWorldBankURL() {
+            const country = wbCountry.value;
+            const indicator = wbIndicator.value;
+            const startDate = wbStartDate.value;
+            const endDate = wbEndDate.value;
+
+            const base = 'https://api.worldbank.org/v2';
+            const path = `/country/${country}/indicator/${indicator}`;
+            const query = `?format=json&per_page=200&date=${startDate}:${endDate}`;
+            
+            const fullUrl = base + path + query;
+
+            // Update URL display with syntax highlighting
+            wbUrlDiv.innerHTML = `<span class="url-part base">${base}</span><span class="url-part path">${path}</span><span class="url-part query">${query}</span>`;
+            
+            // Update breakdown
+            wbBreakdownDiv.innerHTML = `
+                <div><span class="url-part base">Base:</span> <span>${base}</span></div>
+                <div><span class="url-part path">Path:</span> <span>/country/<span class="font-bold">${country}</span>/indicator/<span class="font-bold">${indicator}</span></span></div>
+                <div><span class="url-part query">Query:</span>
+                    <ul class="list-disc list-inside ml-4 mt-1">
+                        <li><span class="param-key">format</span>=<span class="param-value">json</span></li>
+                        <li><span class="param-key">per_page</span>=<span class="param-value">200</span> (to avoid multiple pages)</li>
+                        <li><span class="param-key">date</span>=<span class="param-value">${startDate}:${endDate}</span></li>
+                    </ul>
+                </div>`;
+        }
+
+        [wbCountry, wbIndicator, wbStartDate, wbEndDate].forEach(el => {
+            el.addEventListener('change', updateWorldBankURL);
+            el.addEventListener('keyup', updateWorldBankURL);
+        });
+
+        // --- NASA POWER API Logic ---
+        const nasaLat = document.getElementById('nasa-lat');
+        const nasaLon = document.getElementById('nasa-lon');
+        const nasaParams = document.querySelectorAll('.nasa-param');
+        const nasaStartDate = document.getElementById('nasa-start-date');
+        const nasaEndDate = document.getElementById('nasa-end-date');
+        const nasaCommunity = document.getElementById('nasa-community');
+        const nasaUrlDiv = document.getElementById('nasa-url');
+        const nasaBreakdownDiv = document.getElementById('nasa-breakdown');
+
+        function updateNasaURL() {
+            const lat = nasaLat.value;
+            const lon = nasaLon.value;
+            const community = nasaCommunity.value;
+            
+            // Format dates as YYYYMMDD
+            const start = nasaStartDate.value.replace(/-/g, '');
+            const end = nasaEndDate.value.replace(/-/g, '');
+
+            const selectedParams = Array.from(nasaParams)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value)
+                .join(',');
+
+            const base = 'https://power.larc.nasa.gov/api';
+            const path = '/temporal/daily/point';
+            const query = `?parameters=${selectedParams}&community=${community}&longitude=${lon}&latitude=${lat}&start=${start}&end=${end}&format=JSON`;
+            
+            const fullUrl = base + path + query;
+
+            nasaUrlDiv.innerHTML = `<span class="url-part base">${base}</span><span class="url-part path">${path}</span><span class="url-part query">${query}</span>`;
+
+            nasaBreakdownDiv.innerHTML = `
+                <div><span class="url-part base">Base:</span> <span>${base}</span></div>
+                <div><span class="url-part path">Path:</span> <span>${path}</span></div>
+                <div><span class="url-part query">Query:</span>
+                    <ul class="list-disc list-inside ml-4 mt-1">
+                        <li><span class="param-key">parameters</span>=<span class="param-value">${selectedParams || "none"}</span></li>
+                        <li><span class="param-key">community</span>=<span class="param-value">${community}</span></li>
+                        <li><span class="param-key">longitude</span>=<span class="param-value">${lon}</span></li>
+                        <li><span class="param-key">latitude</span>=<span class="param-value">${lat}</span></li>
+                        <li><span class="param-key">start</span>=<span class="param-value">${start}</span></li>
+                        <li><span class="param-key">end</span>=<span class="param-value">${end}</span></li>
+                        <li><span class="param-key">format</span>=<span class="param-value">JSON</span></li>
+                    </ul>
+                </div>`;
+        }
+        
+        const nasaElements = [nasaLat, nasaLon, nasaStartDate, nasaEndDate, nasaCommunity];
+        nasaElements.forEach(el => {
+            el.addEventListener('change', updateNasaURL);
+            el.addEventListener('keyup', updateNasaURL);
+        });
+        nasaParams.forEach(cb => cb.addEventListener('change', updateNasaURL));
+
+        // Initial calls to populate on page load
+        updateWorldBankURL();
+        updateNasaURL();
+    </script>
+</body>
+</html>
