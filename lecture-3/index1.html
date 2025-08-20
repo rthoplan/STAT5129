@@ -56,17 +56,17 @@
 
             <!-- Section 1: The Big Idea -->
             <section id="intro" class="mb-10">
-                <h2 class="text-2xl font-bold text-blue-600 mb-4 border-l-4 border-blue-600 pl-4">The Big Idea: It's All About Organization</h2>
+                <h2 class="text-2xl font-bold text-blue-600 mb-4 border-l-4 border-blue-600 pl-4">The Big Idea: It's All About Organisation</h2>
                 <p class="text-base leading-relaxed">
                     Imagine you have a huge spreadsheet of sales data. A <strong>CSV (Comma-Separated Values)</strong> file is like a simple text document where you write down each sale, one after another, row by row. It's easy to write, but to find all the sales from a specific region, you have to read the entire document from top to bottom.
                 </p>
                 <br>
                 <p class="text-base leading-relaxed">
-                    A <strong>Parquet file</strong> is like a super-organized filing cabinet. Instead of storing data row-by-row, it stores it <strong>column-by-column</strong>. All the 'Region' data is together, all the 'Sales Amount' data is together, and so on. This might seem like a small change, but it makes finding and analyzing specific information incredibly fast.
+                    A <strong>Parquet file</strong> is like a super-organised filing cabinet. Instead of storing data row-by-row, it stores it <strong>column-by-column</strong>. All the 'Region' data is together, all the 'Sales Amount' data is together, and so on. This might seem like a small change, but it makes finding and analysing specific information incredibly fast.
                 </p>
             </section>
 
-            <!-- Section 2: Interactive Visualization -->
+            <!-- Section 2: Interactive Visualisation -->
             <section id="interactive-viz" class="mb-10">
                 <h2 class="text-2xl font-bold text-blue-600 mb-4 border-l-4 border-blue-600 pl-4">Interactive: CSV vs. Parquet Storage</h2>
                 <p class="text-base mb-6">Click the buttons to see how the same data is read by a computer in each format. Notice how CSV reads the full record, while Parquet can grab just the columns it needs.</p>
@@ -111,7 +111,7 @@
                         <div class="flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 text-blue-600 mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                         </div>
-                        <h3 class="text-lg font-semibold mb-2">1. Blazing Fast Queries ⚡</h3>
+                        <h3 class="text-lg font-semibold mb-2">1. Blasing Fast Queries ⚡</h3>
                         <p class="text-sm text-gray-600">Because data is grouped by column, you only read the data you need. If you want to calculate the average sales, you just read the 'Sales' column, ignoring all others. This is called "column pruning" and it's a huge time-saver.</p>
                     </div>
                     <!-- Benefit 2: Smaller Files -->
@@ -119,7 +119,7 @@
                         <div class="flex items-center justify-center h-12 w-12 rounded-full bg-green-100 text-green-600 mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 1v4m0 0h-4m4 0l-5-5" /></svg>
                         </div>
-                        <h3 class="text-lg font-semibold mb-2">2. Amazing Compression 📦</h3>
+                        <h3 class="text-lg font-semibold mb-2">2. Amasing Compression 📦</h3>
                         <p class="text-sm text-gray-600">Data in the same column is often very similar (e.g., a 'Region' column might only have "North", "South", "East", "West"). This similarity makes it extremely easy to compress, leading to much smaller file sizes than CSVs. This saves storage costs and speeds up data transfer.</p>
                     </div>
                     <!-- Benefit 3: Schema Evolution -->
