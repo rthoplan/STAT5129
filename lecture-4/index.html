@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding RDBMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .diagram-item, .db-btn, .acid-btn {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .diagram-item {
+             border: 2px solid transparent;
+        }
+        .diagram-item.selected {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            border-color: #3B82F6; /* blue-500 */
+        }
+        .info-panel, .acid-panel, .db-panel {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        .info-panel.active, .acid-panel.active, .db-panel.active {
+            display: block;
+        }
+        .acid-btn.selected, .db-btn.selected {
+            background-color: #3B82F6; /* blue-500 */
+            color: white;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-5xl">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">Understanding Relational Databases</h1>
+            <p class="mt-2 text-lg text-slate-600">An interactive guide to understanding relational databases.</p>
+        </header>
+
+        <!-- What is a Relational Database Section -->
+        <section class="mb-12 bg-white p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold mb-4">First, What is a Relational Database?</h2>
+            <p class="text-slate-600">Before we talk about the management system (RDBMS), let's understand the database itself.</p>
+            <p class="mt-3 text-slate-700">Imagine a collection of organised spreadsheets (like Excel) that are all linked to each other. In a relational database:</p>
+            <ul class="list-disc list-inside mt-4 space-y-2">
+                <li>Each spreadsheet is called a <b class="font-semibold">table</b>.</li>
+                <li>Each row in a table is a <b class="font-semibold">record</b> (e.g., a specific customer).</li>
+                <li>Each column is an <b class="font-semibold">attribute</b> (e.g., customer name or phone number).</li>
+            </ul>
+            <p class="mt-4 text-slate-700">For example, a Mauritian hotel group might have a 'Customers' table and a 'Bookings' table. Instead of repeating a customer's name and address for every booking they make, the 'Bookings' table simply links to the customer's unique ID in the 'Customers' table. This method of storing data in separate but linked tables is the core idea of a relational database. It keeps data organised, efficient, and prevents errors.</p>
+        </section>
+
+        <!-- Interactive Diagram Section -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-center mb-6">How an RDBMS Works: The Flow of Data</h2>
+            
+            <!-- Diagram Visuals -->
+            <div class="flex items-center justify-center flex-wrap gap-2 md:gap-4 mb-6">
+                <!-- User -->
+                <div id="diag-user" class="diagram-item flex flex-col items-center p-4 bg-white rounded-lg shadow-md w-24 h-24 justify-center" onclick="showInfo('user')">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    <span class="text-sm font-semibold mt-2">Users</span>
+                </div>
+                
+                <div class="text-2xl font-light text-slate-400">→</div>
+
+                <!-- SQL Queries -->
+                <div id="diag-sql" class="diagram-item flex flex-col items-center p-4 bg-white rounded-lg shadow-md w-24 h-24 justify-center" onclick="showInfo('sql')">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4" /></svg>
+                    <span class="text-sm font-semibold mt-2">SQL Queries</span>
+                </div>
+
+                <div class="text-2xl font-light text-slate-400">→</div>
+
+                <!-- RDBMS Engine -->
+                <div id="diag-rdbms" class="diagram-item flex flex-col items-center p-4 bg-white rounded-lg shadow-md w-24 h-24 justify-center" onclick="showInfo('rdbms')">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    <span class="text-sm font-semibold mt-2">RDBMS</span>
+                </div>
+
+                <div class="text-2xl font-light text-slate-400">→</div>
+
+                <!-- Tables -->
+                <div id="diag-tables" class="diagram-item flex flex-col items-center p-4 bg-white rounded-lg shadow-md w-24 h-24 justify-center" onclick="showInfo('tables')">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                    <span class="text-sm font-semibold mt-2">Tables</span>
+                </div>
+            </div>
+
+            <!-- Information Panels -->
+            <div id="info-container" class="mt-6 min-h-[120px]">
+                <div id="info-initial" class="info-panel active text-center text-slate-500">
+                    <p>Click on an item in the diagram to learn more about it.</p>
+                </div>
+                <div id="info-user" class="info-panel bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="font-bold text-lg mb-2 text-blue-600">Users & Applications</h3>
+                    <p>This is the starting point. A user or an application (like a website or mobile app) needs to interact with data. They don't access the data directly; instead, they formulate a request to retrieve, add, update, or delete information.</p>
+                </div>
+                <div id="info-sql" class="info-panel bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="font-bold text-lg mb-2 text-blue-600">SQL Queries</h3>
+                    <p>The request is translated into a <b class="font-semibold">SQL (Structured Query Language)</b> query. SQL is the universal language for communicating with relational databases. For example, <code class="bg-slate-100 p-1 rounded text-sm">SELECT * FROM reservations WHERE hotel_location = 'Flic-en-Flac';</code> is a query to get all hotel reservations in Flic-en-Flac.</p>
+                </div>
+                <div id="info-rdbms" class="info-panel bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="font-bold text-lg mb-2 text-blue-600">RDBMS Engine</h3>
+                    <p>The RDBMS is the software that receives and processes the SQL query. It's the "brain" of the operation. It parses the query, checks for permissions, creates an optimal execution plan, and then performs the requested action on the database.</p>
+                </div>
+                <div id="info-tables" class="info-panel bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="font-bold text-lg mb-2 text-blue-600">Data Tables</h3>
+                    <p>The data itself is stored in structured tables, which consist of rows and columns. Each table represents an entity (like 'Customers' or 'Products'), and relationships can be defined between them. The RDBMS engine reads from or writes to these tables to fulfill the query.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Concepts Section -->
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+            <!-- ACID Properties -->
+            <section>
+                <h2 class="text-2xl font-bold mb-4">The ACID Guarantee</h2>
+                <p class="text-slate-600 mb-4">An RDBMS ensures data reliability through four key properties, collectively known as ACID. This is a contract that guarantees transactions are processed reliably.</p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button id="acid-A" class="acid-btn flex-grow px-4 py-2 bg-slate-200 rounded-md font-semibold" onclick="showAcid('A')">Atomicity</button>
+                    <button id="acid-C" class="acid-btn flex-grow px-4 py-2 bg-slate-200 rounded-md font-semibold" onclick="showAcid('C')">Consistency</button>
+                    <button id="acid-I" class="acid-btn flex-grow px-4 py-2 bg-slate-200 rounded-md font-semibold" onclick="showAcid('I')">Isolation</button>
+                    <button id="acid-D" class="acid-btn flex-grow px-4 py-2 bg-slate-200 rounded-md font-semibold" onclick="showAcid('D')">Durability</button>
+                </div>
+                <div id="acid-info-container" class="bg-white p-6 rounded-lg shadow-lg min-h-[160px]">
+                    <div id="acid-info-initial" class="acid-panel active text-slate-500"><p>Click a property to see its description.</p></div>
+                    <div id="acid-info-A" class="acid-panel">
+                        <h4 class="font-bold text-lg mb-2">Atomicity</h4>
+                        <p>Ensures a transaction is an "all or nothing" operation. If one part fails, the entire transaction fails. Think of booking a flight and hotel package on Air Mauritius. The flight must be booked AND the hotel reserved. If the hotel booking fails, the flight booking must be automatically cancelled too.</p>
+                    </div>
+                    <div id="acid-info-C" class="acid-panel">
+                        <h4 class="font-bold text-lg mb-2">Consistency</h4>
+                        <p>Guarantees that a transaction will only bring the database from one valid state to another. Any data written to the database must be valid according to all defined rules. For example, a National ID number must follow the correct format.</p>
+                    </div>
+                    <div id="acid-info-I" class="acid-panel">
+                        <h4 class="font-bold text-lg mb-2">Isolation</h4>
+                        <p>Ensures that concurrent transactions do not interfere with each other. Imagine the last ticket for a concert at the Caudan Arts Centre is being sold online. Two customers click 'buy' at the same moment. Isolation guarantees that one customer's entire transaction (reserving the ticket, processing payment) is completed before the other customer's transaction begins. This prevents both people from accidentally buying the same single ticket.</p>
+                    </div>
+                    <div id="acid-info-D" class="acid-panel">
+                        <h4 class="font-bold text-lg mb-2">Durability</h4>
+                        <p>Guarantees that once a transaction has been committed, it will remain so even if there's a power outage or system crash. Your Juice payment confirmation is permanent and won't be lost.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Examples & Importance -->
+            <section>
+                <h2 class="text-2xl font-bold mb-4">In The Real World</h2>
+                <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+                    <h3 class="font-semibold text-lg mb-3">Popular RDBMS Software</h3>
+                    <div class="flex items-center justify-around flex-wrap gap-4 mb-4">
+                        <img src="https://placehold.co/100x40/FFFFFF/000000?text=MySQL" alt="MySQL Logo" class="h-10" onerror="this.onerror=null;this.src='https://placehold.co/100x40/FFFFFF/000000?text=MySQL';">
+                        <img src="https://placehold.co/100x40/FFFFFF/000000?text=PostgreSQL" alt="PostgreSQL Logo" class="h-10" onerror="this.onerror=null;this.src='https://placehold.co/100x40/FFFFFF/000000?text=PostgreSQL';">
+                        <img src="https://placehold.co/100x40/FFFFFF/000000?text=Oracle" alt="Oracle Database Logo" class="h-10" onerror="this.onerror=null;this.src='https://placehold.co/100x40/FFFFFF/000000?text=Oracle';">
+                    </div>
+                     <p class="text-slate-600 text-sm">These systems are used everywhere, from powering the online banking portal of <a href="https://blogs.oracle.com/infrastructure/post/mauritius-commercial-bank-increasing-productivity-improving-customer-service-and-reducing-energy-by-migrating-to-exadata" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">MCB</a> to managing student records at the <a href="https://www.uom.ac.mu/index.php/informationsystems" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">University of Mauritius</a> via its Oracle Enterprise Resource Planning (ERP) system.</p>
+                </div>
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg">
+                    <h3 class="font-bold">Why does it matter?</h3>
+                    <p>Without an RDBMS, managing large datasets would be chaotic. Data could become inconsistent, duplicated, or lost. It would be difficult to enforce rules, ensure data integrity, and prevent errors, especially with multiple users accessing the data simultaneously.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- RDBMS Comparison Section -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-center mb-6">Popular RDBMS: A Quick Comparison</h2>
+            <div class="flex flex-wrap justify-center gap-2 mb-4">
+                <button id="db-mysql" class="db-btn flex-grow px-4 py-2 bg-slate-200 rounded-md font-semibold" onclick="showDbInfo('mysql')">MySQL</button>
+                <button id="db-postgres" class="db-btn flex-grow px-4 py-2 bg-slate-200 rounded-md font-semibold" onclick="showDbInfo('postgres')">PostgreSQL</button>
+                <button id="db-oracle" class="db-btn flex-grow px-4 py-2 bg-slate-200 rounded-md font-semibold" onclick="showDbInfo('oracle')">Oracle</button>
+            </div>
+            <div id="db-info-container" class="bg-white p-6 rounded-lg shadow-lg min-h-[220px]">
+                <div id="db-info-initial" class="db-panel active text-slate-500 flex items-center justify-center h-full"><p></p></div>
+                <div id="db-info-mysql" class="db-panel">
+                    <h3 class="font-bold text-lg mb-2 text-blue-600">MySQL</h3>
+                    <p class="text-slate-700">The world's most popular open-source database. Think of it as a reliable, high-performance car that's great for most everyday driving.</p>
+                    <ul class="list-disc list-inside mt-4 space-y-2 text-sm">
+                        <li><b class="font-semibold">Main Advantage:</b> Speed and Simplicity. It's incredibly fast for reading data and is relatively easy to set up and manage, making it a top choice for web applications.</li>
+                        <li><b class="font-semibold">Key Difference:</b> Popularity. Its massive community provides endless online resources, making it easy to find help and tutorials.</li>
+                    </ul>
+                </div>
+                <div id="db-info-postgres" class="db-panel">
+                    <h3 class="font-bold text-lg mb-2 text-blue-600">PostgreSQL</h3>
+                    <p class="text-slate-700">The most advanced open-source database. If MySQL is a great family car, PostgreSQL is a powerful, all-terrain vehicle built for complex jobs.</p>
+                     <ul class="list-disc list-inside mt-4 space-y-2 text-sm">
+                        <li><b class="font-semibold">Main Advantage:</b> Advanced Features. It's better at handling complex queries and large datasets, making it ideal for financial and scientific applications.</li>
+                        <li><b class="font-semibold">Key Difference:</b> Extensibility and Compliance. You can define your own data types, and it strictly follows SQL standards for high data reliability.</li>
+                    </ul>
+                </div>
+                <div id="db-info-oracle" class="db-panel">
+                     <h3 class="font-bold text-lg mb-2 text-blue-600">Oracle</h3>
+                    <p class="text-slate-700">The industrial-grade, armoured truck of databases, built for the largest and most critical corporate applications.</p>
+                     <ul class="list-disc list-inside mt-4 space-y-2 text-sm">
+                        <li><b class="font-semibold">Main Advantage:</b> Enterprise Power. Designed for massive-scale systems that demand the highest level of performance, security, and availability, like those in major banks.</li>
+                        <li><b class="font-semibold">Key Difference:</b> Official Support and Cost. As a commercial product, it comes with dedicated professional support but also has significant licensing costs.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // --- Interactive Diagram Logic ---
+        const infoPanels = document.querySelectorAll('.info-panel');
+        const diagramItems = document.querySelectorAll('.diagram-item');
+        const initialInfoPanel = document.getElementById('info-initial');
+
+        function showInfo(id) {
+            infoPanels.forEach(panel => panel.classList.remove('active'));
+            diagramItems.forEach(item => item.classList.remove('selected'));
+            const panelToShow = document.getElementById('info-' + id);
+            const itemToSelect = document.getElementById('diag-' + id);
+            if (panelToShow && itemToSelect) {
+                panelToShow.classList.add('active');
+                itemToSelect.classList.add('selected');
+            }
+        }
+
+        // --- ACID Properties Logic ---
+        const acidPanels = document.querySelectorAll('.acid-panel');
+        const acidBtns = document.querySelectorAll('.acid-btn');
+        const initialAcidPanel = document.getElementById('acid-info-initial');
+
+        function showAcid(id) {
+            acidPanels.forEach(panel => panel.classList.remove('active'));
+            acidBtns.forEach(btn => btn.classList.remove('selected'));
+            const panelToShow = document.getElementById('acid-info-' + id);
+            const btnToSelect = document.getElementById('acid-' + id);
+            if (panelToShow && btnToSelect) {
+                panelToShow.classList.add('active');
+                btnToSelect.classList.add('selected');
+            }
+        }
+
+        // --- DB Comparison Logic ---
+        const dbPanels = document.querySelectorAll('.db-panel');
+        const dbBtns = document.querySelectorAll('.db-btn');
+        const initialDbPanel = document.getElementById('db-info-initial');
+
+        function showDbInfo(id) {
+            dbPanels.forEach(panel => panel.classList.remove('active'));
+            dbBtns.forEach(btn => btn.classList.remove('selected'));
+            const panelToShow = document.getElementById('db-info-' + id);
+            const btnToSelect = document.getElementById('db-' + id);
+            if (panelToShow && btnToSelect) {
+                panelToShow.classList.add('active');
+                btnToSelect.classList.add('selected');
+            }
+        }
+
+        // Initialize the view
+        document.addEventListener('DOMContentLoaded', () => {
+            showInfo('rdbms'); // Start with RDBMS selected
+            showAcid('A');   // Start with Atomicity selected
+            showDbInfo('mysql'); // Start with MySQL selected
+        });
+    </script>
+
+</body>
+</html>
