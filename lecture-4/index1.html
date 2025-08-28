@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Key Explainer</title>
+    <!-- Use Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .code-block {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+        .key-highlight {
+            background-color: #4a5568;
+            border-radius: 0.25rem;
+            padding: 0.1rem 0.25rem;
+        }
+        .fk-highlight {
+            background-color: #48bb78;
+            color: #1a202c;
+            border-radius: 0.25rem;
+            padding: 0.1rem 0.25rem;
+        }
+        .pk-highlight {
+            background-color: #63b3ed;
+            color: #1a202c;
+            border-radius: 0.25rem;
+            padding: 0.1rem 0.25rem;
+        }
+    </style>
+</head>
+<body class="p-8 md:p-12 lg:p-16">
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl p-6 md:p-8 lg:p-10">
+        <h1 class="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-2">Database Key Examples</h1>
+        <p class="text-center text-gray-500 mb-8">
+            Click on the "Explain" button for each table to learn about different types of keys.
+        </p>
+
+        <!-- Primary Key Section -->
+        <div class="mb-10">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-semibold text-blue-600">Primary Key (PK)</h2>
+                <button onclick="explainPK()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+                    Explain PK
+                </button>
+            </div>
+            <pre class="code-block whitespace-pre-wrap"><code id="pk-code">CREATE TABLE Student (
+  <span id="pk-span">student_id INT PRIMARY KEY</span>,
+  full_name  VARCHAR(80),
+  dob        DATE
+);</code></pre>
+            <div id="pk-explanation" class="mt-4 p-4 rounded-lg bg-blue-50 text-blue-800 border-l-4 border-blue-500 transition-opacity duration-300 opacity-0 h-0 overflow-hidden">
+                <p><strong>Explanation:</strong> A Primary Key is a field (or combination of fields) that uniquely identifies each row in a table. It's a fundamental rule of databases—every record must have a unique identifier.</p>
+                <p class="mt-2">In this example, the <strong>student_id</strong> is the Primary Key. This means no two students can have the same ID, and every student must have an ID.</p>
+            </div>
+        </div>
+
+        <!-- Composite Key Section -->
+        <div class="mb-10">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-semibold text-purple-600">Composite Primary Key</h2>
+                <button onclick="explainCompositePK()" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+                    Explain PK
+                </button>
+            </div>
+            <pre class="code-block whitespace-pre-wrap"><code id="composite-pk-code">CREATE TABLE EmployeeProject (
+  emp_id     INT,
+  project_id INT,
+  hours_worked INT,
+  <span id="composite-pk-span">PRIMARY KEY (emp_id, project_id)</span>
+);</code></pre>
+            <div id="composite-pk-explanation" class="mt-4 p-4 rounded-lg bg-purple-50 text-purple-800 border-l-4 border-purple-500 transition-opacity duration-300 opacity-0 h-0 overflow-hidden">
+                <p><strong>Explanation:</strong> A Composite Primary Key is a Primary Key made up of two or more columns. It's used when a single column is not enough to uniquely identify a row.</p>
+                <p class="mt-2">Here, the combination of <strong>emp_id</strong> and <strong>project_id</strong> together forms the Primary Key. An employee can work on multiple projects and a project can have multiple employees, but the combination of a specific employee working on a specific project is unique.</p>
+            </div>
+        </div>
+
+        <!-- Foreign Key Section -->
+        <div>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-semibold text-green-600">Foreign Key (FK)</h2>
+                <button onclick="explainFK()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+                    Explain FK
+                </button>
+            </div>
+            <pre class="code-block whitespace-pre-wrap mb-4"><code>CREATE TABLE House (
+  house_id INT PRIMARY KEY,
+  name     VARCHAR(60)
+);</code></pre>
+            <pre class="code-block whitespace-pre-wrap"><code id="fk-code">CREATE TABLE Room (
+  room_id   INT PRIMARY KEY,
+  room_name VARCHAR(60),
+  <span id="fk-span">house_id  INT,</span>
+  <span id="fk-reference">FOREIGN KEY (house_id) REFERENCES House(house_id)</span>
+);</code></pre>
+            <div id="fk-explanation" class="mt-4 p-4 rounded-lg bg-green-50 text-green-800 border-l-4 border-green-500 transition-opacity duration-300 opacity-0 h-0 overflow-hidden">
+                <p><strong>Explanation:</strong> A Foreign Key is a field in one table that refers to the Primary Key of another table. It's used to create a link or a relationship between the tables, enforcing referential integrity.</p>
+                <p class="mt-2">In this case, the <strong>house_id</strong> in the <code>Room</code> table is a Foreign Key. It links each room back to a specific house in the <code>House</code> table. This ensures that every room record belongs to a valid, existing house.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to toggle the display and highlight
+        function toggleExplanation(explanationId, spanId) {
+            const explanationDiv = document.getElementById(explanationId);
+            const span = document.getElementById(spanId);
+
+            // Toggle visibility
+            if (explanationDiv.classList.contains('opacity-0')) {
+                // Show the explanation
+                explanationDiv.classList.remove('opacity-0');
+                explanationDiv.classList.remove('h-0');
+                explanationDiv.classList.add('h-auto');
+                
+                // Add highlight based on key type
+                if (spanId === 'pk-span') {
+                    span.classList.add('pk-highlight');
+                } else if (spanId === 'composite-pk-span') {
+                    span.classList.add('pk-highlight');
+                } else if (spanId === 'fk-span') {
+                    span.classList.add('fk-highlight');
+                    document.getElementById('fk-reference').classList.add('fk-highlight');
+                }
+            } else {
+                // Hide the explanation
+                explanationDiv.classList.add('opacity-0');
+                explanationDiv.classList.add('h-0');
+                explanationDiv.classList.remove('h-auto');
+
+                // Remove highlight
+                if (spanId === 'pk-span') {
+                    span.classList.remove('pk-highlight');
+                } else if (spanId === 'composite-pk-span') {
+                    span.classList.remove('pk-highlight');
+                } else if (spanId === 'fk-span') {
+                    span.classList.remove('fk-highlight');
+                    document.getElementById('fk-reference').classList.remove('fk-highlight');
+                }
+            }
+        }
+
+        // Functions for each key type
+        function explainPK() {
+            toggleExplanation('pk-explanation', 'pk-span');
+        }
+
+        function explainCompositePK() {
+            toggleExplanation('composite-pk-explanation', 'composite-pk-span');
+        }
+
+        function explainFK() {
+            toggleExplanation('fk-explanation', 'fk-span');
+        }
+    </script>
+</body>
+</html>
