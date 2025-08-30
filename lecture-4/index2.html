@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Normalisation Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        .section-box {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2.5rem;
+            transition: transform 0.2s ease-in-out;
+            cursor: default; /* Changed cursor to default as the whole box is no longer clickable */
+        }
+        /* Removed hover effect on section-box as only the buttons are interactive */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #d1d5db;
+        }
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .code-block {
+            background-color: #1f2937;
+            color: #f9fafb;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        /* Custom styles for the button animation */
+        .btn-animation {
+          position: relative;
+          z-index: 1;
+        }
+        .btn-animation::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, #10b981, #34d399, #10b981);
+          background-size: 200% 200%;
+          border-radius: 10px;
+          transition: background-position 0.5s ease;
+          z-index: -1;
+        }
+        .btn-animation:hover::before {
+          background-position: -100% 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+<div class="container p-4 md:p-8 space-y-12">
+    <header class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold text-teal-600 mb-4">Database Normalisation Explorer</h1>
+        <p class="text-lg text-gray-600">
+            Learn and visualise how to structure your database tables efficiently to eliminate redundancy and improve data integrity.
+        </p>
+    </header>
+
+    <!-- First Normal Form (1NF) Section -->
+    <section id="1nf" class="section-box">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">1. First Normal Form (1NF)</h2>
+        <p class="mb-4 text-gray-700">
+            A table is in **1NF** if each column contains an atomic (indivisible) value, and there are no repeating groups of data.
+        </p>
+        <div id="table-1nf-bad" class="mb-8">
+            <h3 class="text-xl font-semibold mb-4 text-rose-500">❌ Bad Table (Not in 1NF)</h3>
+            <p class="mb-4 text-gray-700">The 'Products' column contains multiple, non-atomic values. This is a violation of 1NF.</p>
+            <div class="table-container">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th>OrderID</th>
+                            <th>Customer</th>
+                            <th>Products</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1001</td>
+                            <td>Sam</td>
+                            <td>Pen, Pencil, Pad</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button id="normalize-1nf-btn" onclick="normalize1NF()" class="w-full mt-4 px-6 py-3 bg-teal-500 text-white font-bold rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-500 transition-all duration-300 transform active:scale-95 btn-animation">
+                Normalise to 1NF
+            </button>
+        </div>
+
+        <div id="table-1nf-good" class="hidden mt-8">
+            <h3 class="text-xl font-semibold mb-4 text-green-600">✅ Corrected Table (In 1NF)</h3>
+            <p class="mb-4 text-gray-700">The table is now in 1NF. Each product has its own row, making the values in the 'Product' column atomic.</p>
+            <div class="table-container">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th>OrderID</th>
+                            <th>Customer</th>
+                            <th>Product</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1001</td><td>Sam</td><td>Pen</td></tr>
+                        <tr><td>1001</td><td>Sam</td><td>Pencil</td></tr>
+                        <tr><td>1001</td><td>Sam</td><td>Pad</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <button id="view-bad-1nf-btn" onclick="viewBad1NF()" class="w-full mt-4 px-6 py-3 bg-gray-400 text-white font-bold rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-4 focus:ring-gray-400 transition-all duration-300 transform active:scale-95">
+                View Bad Table Again
+            </button>
+        </div>
+    </section>
+
+    <!-- Second Normal Form (2NF) Section -->
+    <section id="2nf" class="section-box">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">2. Second Normal Form (2NF)</h2>
+        <p class="mb-4 text-gray-700">
+            A table must be in **1NF** and eliminate partial dependency. This means non-key attributes must depend on the **entire** composite key, not just part of it.
+        </p>
+        <div id="table-2nf-bad" class="mb-8">
+            <h3 class="text-xl font-semibold mb-4 text-rose-500">❌ Bad Table (Not in 2NF)</h3>
+            <p class="mb-4 text-gray-700">
+                The composite key is (`student_id`, `course_id`). The `course_name` column only depends on `course_id`, not the full key. This is a partial dependency.
+            </p>
+            <div class="code-block">
+                <pre>CREATE TABLE CourseReg (
+  student_id INT,
+  course_id  INT,
+  course_name VARCHAR(100),
+  PRIMARY KEY (student_id, course_id)
+);</pre>
+            </div>
+            <button id="normalize-2nf-btn" onclick="normalize2NF()" class="w-full mt-4 px-6 py-3 bg-teal-500 text-white font-bold rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-500 transition-all duration-300 transform active:scale-95 btn-animation">
+                Normalise to 2NF
+            </button>
+        </div>
+
+        <div id="table-2nf-good" class="hidden mt-8 space-y-6">
+            <h3 class="text-xl font-semibold text-green-600">✅ Corrected Tables (In 2NF)</h3>
+            <p class="mb-4 text-gray-700">
+                The original table is split into two, removing the partial dependency. The `course_name` is now in its own table, where it depends on the primary key `course_id`.
+            </p>
+            <div class="code-block">
+                <pre>CREATE TABLE Course (
+  course_id INT PRIMARY KEY,
+  course_name VARCHAR(100)
+);
+
+CREATE TABLE CourseReg (
+  student_id INT,
+  course_id  INT,
+  PRIMARY KEY (student_id, course_id),
+  FOREIGN KEY (course_id) REFERENCES Course(course_id)
+);</pre>
+            </div>
+            <button id="view-bad-2nf-btn" onclick="viewBad2NF()" class="w-full mt-4 px-6 py-3 bg-gray-400 text-white font-bold rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-4 focus:ring-gray-400 transition-all duration-300 transform active:scale-95">
+                View Bad Tables Again
+            </button>
+        </div>
+    </section>
+
+    <!-- Third Normal Form (3NF) Section -->
+    <section id="3nf" class="section-box">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">3. Third Normal Form (3NF)</h2>
+        <p class="mb-4 text-gray-700">
+            A table must be in **2NF** and eliminate transitive dependencies. A transitive dependency occurs when a non-key attribute depends on another non-key attribute.
+        </p>
+        
+        <div id="table-3nf-bad" class="mb-8">
+            <h3 class="text-xl font-semibold mb-4 text-rose-500">❌ Bad Table (Not in 3NF)</h3>
+            <p class="mb-4 text-gray-700">
+                The `emp_id` is the primary key. `dept_name` is a non-key attribute that depends on another non-key attribute, `dept_id`. This is a transitive dependency.
+            </p>
+            <div class="code-block">
+                <pre>CREATE TABLE Employee (
+  emp_id INT PRIMARY KEY,
+  emp_name VARCHAR(100),
+  dept_id INT,
+  dept_name VARCHAR(100)
+);</pre>
+            </div>
+            <button id="normalize-3nf-btn" onclick="normalize3NF()" class="w-full mt-4 px-6 py-3 bg-teal-500 text-white font-bold rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-500 transition-all duration-300 transform active:scale-95 btn-animation">
+                Normalise to 3NF
+            </button>
+        </div>
+
+        <div id="table-3nf-good" class="hidden mt-8 space-y-6">
+            <h3 class="text-xl font-semibold text-green-600">✅ Corrected Tables (In 3NF)</h3>
+            <p class="mb-4 text-gray-700">
+                The table is split, and `dept_name` is moved to a new `Department` table where it is properly dependent on its primary key, `dept_id`.
+            </p>
+            <div class="code-block">
+                <pre>CREATE TABLE Department (
+  dept_id INT PRIMARY KEY,
+  dept_name VARCHAR(100)
+);
+
+CREATE TABLE Employee (
+  emp_id INT PRIMARY KEY,
+  emp_name VARCHAR(100),
+  dept_id INT,
+  FOREIGN KEY (dept_id) REFERENCES Department(dept_id)
+);</pre>
+            </div>
+            <button id="view-bad-3nf-btn" onclick="viewBad3NF()" class="w-full mt-4 px-6 py-3 bg-gray-400 text-white font-bold rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-4 focus:ring-gray-400 transition-all duration-300 transform active:scale-95">
+                View Bad Tables Again
+            </button>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    function normalize1NF() {
+        document.getElementById('table-1nf-bad').style.display = 'none';
+        document.getElementById('table-1nf-good').style.display = 'block';
+    }
+
+    function viewBad1NF() {
+        document.getElementById('table-1nf-good').style.display = 'none';
+        document.getElementById('table-1nf-bad').style.display = 'block';
+    }
+
+    function normalize2NF() {
+        document.getElementById('table-2nf-bad').style.display = 'none';
+        document.getElementById('table-2nf-good').style.display = 'block';
+    }
+
+    function viewBad2NF() {
+        document.getElementById('table-2nf-good').style.display = 'none';
+        document.getElementById('table-2nf-bad').style.display = 'block';
+    }
+
+    function normalize3NF() {
+        document.getElementById('table-3nf-bad').style.display = 'none';
+        document.getElementById('table-3nf-good').style.display = 'block';
+    }
+    
+    function viewBad3NF() {
+        document.getElementById('table-3nf-good').style.display = 'none';
+        document.getElementById('table-3nf-bad').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
