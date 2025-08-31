@@ -89,7 +89,7 @@
     <section id="1nf" class="section-box">
         <h2 class="text-3xl font-bold text-gray-900 mb-6">1. First Normal Form (1NF)</h2>
         <p class="mb-4 text-gray-700">
-            A table is in **1NF** if each column contains an atomic (indivisible) value, and there are no repeating groups of data.
+            A table is in 1NF if each column contains an atomic (indivisible) value, and there are no repeating groups of data.
         </p>
         <div id="table-1nf-bad" class="mb-8">
             <h3 class="text-xl font-semibold mb-4 text-rose-500">❌ Bad Table (Not in 1NF)</h3>
@@ -146,7 +146,7 @@
     <section id="2nf" class="section-box">
         <h2 class="text-3xl font-bold text-gray-900 mb-6">2. Second Normal Form (2NF)</h2>
         <p class="mb-4 text-gray-700">
-            A table must be in **1NF** and eliminate partial dependency. This means non-key attributes must depend on the **entire** composite key, not just part of it.
+            A table must be in 1NF and eliminate partial dependency. This means non-key attributes must depend on the entire composite key, not just part of it.
         </p>
         <div id="table-2nf-bad" class="mb-8">
             <h3 class="text-xl font-semibold mb-4 text-rose-500">❌ Bad Table (Not in 2NF)</h3>
@@ -194,7 +194,7 @@ CREATE TABLE CourseReg (
     <section id="3nf" class="section-box">
         <h2 class="text-3xl font-bold text-gray-900 mb-6">3. Third Normal Form (3NF)</h2>
         <p class="mb-4 text-gray-700">
-            A table must be in **2NF** and eliminate transitive dependencies. A transitive dependency occurs when a non-key attribute depends on another non-key attribute.
+            A table must be in 2NF and eliminate transitive dependencies. A transitive dependency occurs when a non-key attribute depends on another non-key attribute.
         </p>
         
         <div id="table-3nf-bad" class="mb-8">
