@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive SQL Joins</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .join-card {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+        .join-header {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .join-content {
+            display: none;
+            padding: 0 2rem 2rem;
+        }
+        .join-content.active {
+            display: block;
+        }
+        .data-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        .data-table {
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            width: 100%;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .data-table th, .data-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .data-table th {
+            background-color: #f9fafb;
+            font-weight: 600;
+        }
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        .code-block {
+            background-color: #1f2937;
+            color: #f3f4f6;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            margin-top: 1rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container py-8">
+        <h1 class="text-4xl font-bold text-center mb-4">SQL Joins Explained</h1>
+        <p class="text-center text-lg text-gray-600 mb-8">Click on a join type to reveal the explanation, sample data, and query results.</p>
+
+        <!-- Inner Join Section -->
+        <div class="join-card">
+            <div class="join-header" onclick="toggleJoinContent('inner-join')">
+                <h2 class="text-2xl font-semibold text-blue-600">INNER JOIN</h2>
+                <svg id="inner-join-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+            <div id="inner-join-content" class="join-content">
+                <p class="text-gray-700">The INNER JOIN returns only the rows that have matching values in both tables. It's the most common type of join and is perfect for finding related data.</p>
+                <div class="data-container">
+                    <div>
+                        <h3 class="font-semibold text-xl mb-2">Table 1: Customers</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>CustomerID</th><th>Name</th><th>City</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>101</td><td>Alice</td><td>New York</td></tr>
+                                <tr><td>102</td><td>Bob</td><td>Los Angeles</td></tr>
+                                <tr><td>103</td><td>Charlie</td><td>Chicago</td></tr>
+                                <tr><td>104</td><td>David</td><td>Houston</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-xl mb-2">Table 2: Orders</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>OrderID</th><th>CustomerID</th><th>OrderDate</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>A01</td><td>101</td><td>2023-01-15</td></tr>
+                                <tr><td>A02</td><td>103</td><td>2023-01-18</td></tr>
+                                <tr><td>A03</td><td>101</td><td>2023-02-20</td></tr>
+                                <tr><td>A04</td><td>105</td><td>2023-03-05</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h3 class="font-semibold text-xl">Result</h3>
+                    <table class="data-table mt-2">
+                        <thead>
+                            <tr><th>Name</th><th>OrderID</th><th>OrderDate</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Alice</td><td>A01</td><td>2023-01-15</td></tr>
+                            <tr><td>Charlie</td><td>A02</td><td>2023-01-18</td></tr>
+                            <tr><td>Alice</td><td>A03</td><td>2023-02-20</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <h3 class="font-semibold text-xl mt-4">SQL Query</h3>
+                <pre class="code-block">
+SELECT
+    c.Name,
+    o.OrderID,
+    o.OrderDate
+FROM
+    Customers c
+INNER JOIN
+    Orders o ON c.CustomerID = o.CustomerID;
+                </pre>
+            </div>
+        </div>
+
+        <!-- Left Join Section -->
+        <div class="join-card">
+            <div class="join-header" onclick="toggleJoinContent('left-join')">
+                <h2 class="text-2xl font-semibold text-green-600">LEFT JOIN</h2>
+                <svg id="left-join-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+            <div id="left-join-content" class="join-content">
+                <p class="text-gray-700">The LEFT JOIN returns all rows from the left table, and the matching rows from the right table. If there is no match, the columns from the right table will have NULL values.</p>
+                <div class="data-container">
+                    <div>
+                        <h3 class="font-semibold text-xl mb-2">Table 1: Customers</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>CustomerID</th><th>Name</th><th>City</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>101</td><td>Alice</td><td>New York</td></tr>
+                                <tr><td>102</td><td>Bob</td><td>Los Angeles</td></tr>
+                                <tr><td>103</td><td>Charlie</td><td>Chicago</td></tr>
+                                <tr><td>104</td><td>David</td><td>Houston</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-xl mb-2">Table 2: Orders</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>OrderID</th><th>CustomerID</th><th>OrderDate</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>A01</td><td>101</td><td>2023-01-15</td></tr>
+                                <tr><td>A02</td><td>103</td><td>2023-01-18</td></tr>
+                                <tr><td>A03</td><td>101</td><td>2023-02-20</td></tr>
+                                <tr><td>A04</td><td>105</td><td>2023-03-05</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h3 class="font-semibold text-xl">Result</h3>
+                    <table class="data-table mt-2">
+                        <thead>
+                            <tr><th>Name</th><th>OrderID</th><th>OrderDate</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Alice</td><td>A01</td><td>2023-01-15</td></tr>
+                            <tr><td>Alice</td><td>A03</td><td>2023-02-20</td></tr>
+                            <tr><td>Bob</td><td><span class="text-red-500">NULL</span></td><td><span class="text-red-500">NULL</span></td></tr>
+                            <tr><td>Charlie</td><td>A02</td><td>2023-01-18</td></tr>
+                            <tr><td>David</td><td><span class="text-red-500">NULL</span></td><td><span class="text-red-500">NULL</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <h3 class="font-semibold text-xl mt-4">SQL Query</h3>
+                <pre class="code-block">
+SELECT
+    c.Name,
+    o.OrderID,
+    o.OrderDate
+FROM
+    Customers c
+LEFT JOIN
+    Orders o ON c.CustomerID = o.CustomerID;
+                </pre>
+            </div>
+        </div>
+
+        <!-- Right Join Section -->
+        <div class="join-card">
+            <div class="join-header" onclick="toggleJoinContent('right-join')">
+                <h2 class="text-2xl font-semibold text-purple-600">RIGHT JOIN</h2>
+                <svg id="right-join-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+            <div id="right-join-content" class="join-content">
+                <p class="text-gray-700">The RIGHT JOIN returns all rows from the right table, and the matching rows from the left table. If there is no match, the columns from the left table will have NULL values. This can be used to find "orphaned" records in the right table that have no corresponding entry in the left one.</p>
+                <div class="data-container">
+                    <div>
+                        <h3 class="font-semibold text-xl mb-2">Table 1: Customers</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>CustomerID</th><th>Name</th><th>City</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>101</td><td>Alice</td><td>New York</td></tr>
+                                <tr><td>102</td><td>Bob</td><td>Los Angeles</td></tr>
+                                <tr><td>103</td><td>Charlie</td><td>Chicago</td></tr>
+                                <tr><td>104</td><td>David</td><td>Houston</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-xl mb-2">Table 2: Orders</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>OrderID</th><th>CustomerID</th><th>OrderDate</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>A01</td><td>101</td><td>2023-01-15</td></tr>
+                                <tr><td>A02</td><td>103</td><td>2023-01-18</td></tr>
+                                <tr><td>A03</td><td>101</td><td>2023-02-20</td></tr>
+                                <tr><td>A04</td><td>105</td><td>2023-03-05</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h3 class="font-semibold text-xl">Result</h3>
+                    <table class="data-table mt-2">
+                        <thead>
+                            <tr><th>Name</th><th>OrderID</th><th>OrderDate</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Alice</td><td>A01</td><td>2023-01-15</td></tr>
+                            <tr><td>Charlie</td><td>A02</td><td>2023-01-18</td></tr>
+                            <tr><td>Alice</td><td>A03</td><td>2023-02-20</td></tr>
+                            <tr><td><span class="text-red-500">NULL</span></td><td>A04</td><td>2023-03-05</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <h3 class="font-semibold text-xl mt-4">SQL Query</h3>
+                <pre class="code-block">
+SELECT
+    c.Name,
+    o.OrderID,
+    o.OrderDate
+FROM
+    Customers c
+RIGHT JOIN
+    Orders o ON c.CustomerID = o.CustomerID;
+                </pre>
+            </div>
+        </div>
+
+        <!-- Full Outer Join Section -->
+        <div class="join-card">
+            <div class="join-header" onclick="toggleJoinContent('full-join')">
+                <h2 class="text-2xl font-semibold text-orange-600">FULL OUTER JOIN</h2>
+                <svg id="full-join-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-orange-600 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+            <div id="full-join-content" class="join-content">
+                <p class="text-gray-700">A FULL OUTER JOIN returns all rows from both tables, with NULL values where a match does not exist. It's a combination of a LEFT and a RIGHT JOIN.</p>
+                <div class="data-container">
+                    <div>
+                        <h3 class="font-semibold text-xl mb-2">Table 1: Customers</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>CustomerID</th><th>Name</th><th>City</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>101</td><td>Alice</td><td>New York</td></tr>
+                                <tr><td>102</td><td>Bob</td><td>Los Angeles</td></tr>
+                                <tr><td>103</td><td>Charlie</td><td>Chicago</td></tr>
+                                <tr><td>104</td><td>David</td><td>Houston</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-xl mb-2">Table 2: Orders</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>OrderID</th><th>CustomerID</th><th>OrderDate</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>A01</td><td>101</td><td>2023-01-15</td></tr>
+                                <tr><td>A02</td><td>103</td><td>2023-01-18</td></tr>
+                                <tr><td>A03</td><td>101</td><td>2023-02-20</td></tr>
+                                <tr><td>A04</td><td>105</td><td>2023-03-05</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h3 class="font-semibold text-xl">Result</h3>
+                    <table class="data-table mt-2">
+                        <thead>
+                            <tr><th>Name</th><th>OrderID</th><th>OrderDate</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Alice</td><td>A01</td><td>2023-01-15</td></tr>
+                            <tr><td>Alice</td><td>A03</td><td>2023-02-20</td></tr>
+                            <tr><td>Bob</td><td><span class="text-red-500">NULL</span></td><td><span class="text-red-500">NULL</span></td></tr>
+                            <tr><td>Charlie</td><td>A02</td><td>2023-01-18</td></tr>
+                            <tr><td>David</td><td><span class="text-red-500">NULL</span></td><td><span class="text-red-500">NULL</span></td></tr>
+                            <tr><td><span class="text-red-500">NULL</span></td><td>A04</td><td>2023-03-05</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <h3 class="font-semibold text-xl mt-4">SQL Query (MySQL Emulation)</h3>
+                <pre class="code-block">
+(SELECT c.Name, o.OrderID, o.OrderDate
+FROM Customers c LEFT JOIN Orders o
+ON c.CustomerID = o.CustomerID)
+UNION
+(SELECT c.Name, o.OrderID, o.OrderDate
+FROM Customers c RIGHT JOIN Orders o
+ON c.CustomerID = o.CustomerID);
+                </pre>
+            </div>
+        </div>
+
+        <!-- Cross Join Section -->
+        <div class="join-card">
+            <div class="join-header" onclick="toggleJoinContent('cross-join')">
+                <h2 class="text-2xl font-semibold text-pink-600">CROSS JOIN</h2>
+                <svg id="cross-join-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-pink-600 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+            <div id="cross-join-content" class="join-content">
+                <p class="text-gray-700">A CROSS JOIN produces a Cartesian product of the two tables. This means every row from the first table is combined with every row from the second table. This is very useful for scenarios like creating a master list of all possible combinations (e.g., matching every product with every store), but it can be dangerous with large tables.</p>
+                <div class="data-container">
+                    <div>
+                        <h3 class="font-semibold text-xl mb-2">Table 1: Products</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>ProductID</th><th>ProductName</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>P1</td><td>Laptop</td></tr>
+                                <tr><td>P2</td><td>Keyboard</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-xl mb-2">Table 2: Colors</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>ColorID</th><th>ColorName</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>C1</td><td>Black</td></tr>
+                                <tr><td>C2</td><td>Silver</td></tr>
+                                <tr><td>C3</td><td>White</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h3 class="font-semibold text-xl">Result</h3>
+                    <table class="data-table mt-2">
+                        <thead>
+                            <tr><th>ProductName</th><th>ColorName</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Laptop</td><td>Black</td></tr>
+                            <tr><td>Laptop</td><td>Silver</td></tr>
+                            <tr><td>Laptop</td><td>White</td></tr>
+                            <tr><td>Keyboard</td><td>Black</td></tr>
+                            <tr><td>Keyboard</td><td>Silver</td></tr>
+                            <tr><td>Keyboard</td><td>White</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <h3 class="font-semibold text-xl mt-4">SQL Query</h3>
+                <pre class="code-block">
+SELECT
+    p.ProductName,
+    c.ColorName
+FROM
+    Products p
+CROSS JOIN
+    Colors c;
+                </pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleJoinContent(id) {
+            const content = document.getElementById(id + '-content');
+            const icon = document.getElementById(id + '-icon');
+            const isActive = content.classList.toggle('active');
+            if (isActive) {
+                icon.style.transform = 'rotate(180deg)';
+                content.style.maxHeight = content.scrollHeight + 'px';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+                content.style.maxHeight = null;
+            }
+        }
+    </script>
+</body>
+</html>
