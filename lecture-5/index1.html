@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Sub-query </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c;
+            color: #e2e8f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .card {
+            background-color: #2d3748;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #4a5568;
+        }
+        th {
+            background-color: #4a5568;
+            font-weight: 600;
+        }
+        .sql-code {
+            background-color: #1a202c;
+            color: #48bb78;
+            font-family: monospace;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            white-space: pre-wrap;
+            margin-top: 1rem;
+        }
+        .result-box {
+            background-color: #2c5282;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            min-height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <div class="container">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-center my-8">SQL Sub-query</h1>
+        <p class="text-center text-gray-400 mb-8">Click on the buttons to see how each type of sub-query works and what it returns.</p>
+
+        <!-- General Sub-query Explanation -->
+        <div class="card">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-400">What is a Sub-query?</h2>
+            <p class="text-gray-300">
+                A sub-query is simply a query that is nested inside another SQL query. Its main purpose is to use the result of one query as an input for a more complex outer query. The sub-query runs first, and its result is then passed to the outer query. It's like asking a question to get an answer that you then use to ask another, bigger question. You can use a sub-query in a few different places, most commonly in the `WHERE`, `FROM`, or `HAVING` clauses.
+            </p>
+        </div>
+
+        <!-- Scalar Sub-query Section -->
+        <div class="card">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-400">1. Scalar Sub-query</h2>
+            <p class="text-gray-300">A scalar sub-query returns a single value (one row, one column). It is often used in a <code>WHERE</code> clause or as a column in a <code>SELECT</code> statement.</p>
+            <div class="table-container">
+                <p class="font-bold mb-2">Sample Table: Employees</p>
+                <table id="employees-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Salary</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>Alice</td><td>Sales</td><td>75000</td></tr>
+                        <tr><td>2</td><td>Bob</td><td>IT</td><td>90000</td></tr>
+                        <tr><td>3</td><td>Charlie</td><td>Sales</td><td>78000</td></tr>
+                        <tr><td>4</td><td>David</td></td><td>IT</td><td>92000</td></tr>
+                        <tr><td>5</td><td>Eve</td><td>Marketing</td><td>85000</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="sql-code">
+                <p class="text-white">-- Find all employees whose salary is greater than the average salary.</p>
+                <p>SELECT Name, Salary FROM Employees</p>
+                <p>WHERE Salary > <span class="text-yellow-300">(SELECT AVG(Salary) FROM Employees)</span>;</p>
+            </div>
+            <button id="run-scalar" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mt-4 transition-colors">Run Query</button>
+            <div class="result-box text-center mt-4">
+                <p id="scalar-result">Click "Run Query" to see the result.</p>
+            </div>
+        </div>
+
+        <!-- Row Sub-query Section -->
+        <div class="card">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-400">2. Row Sub-query</h2>
+            <p class="text-gray-300">A row sub-query returns a single row but can have multiple columns. It is typically used in a <code>WHERE</code> clause with operators like <code>IN</code> or <code>=</code>.</p>
+            <div class="table-container">
+                <p class="font-bold mb-2">Sample Table: Employees</p>
+                <table id="employees-table-2">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>JobTitle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>Alice</td><td>Sales</td><td>Manager</td></tr>
+                        <tr><td>2</td><td>Bob</td><td>IT</td><td>Analyst</td></tr>
+                        <tr><td>3</td><td>Charlie</td><td>IT</td><td>Manager</td></tr>
+                        <tr><td>4</td><td>David</td><td>Sales</td><td>Analyst</td></tr>
+                        <tr><td>5</td><td>Eve</td><td>Marketing</td><td>Manager</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="sql-code">
+                <p class="text-white">-- Find the employee who is both an 'Analyst' and works in 'IT'.</p>
+                <p>SELECT Name FROM Employees</p>
+                <p>WHERE (JobTitle, Department) = <span class="text-yellow-300">(SELECT JobTitle, Department FROM Employees WHERE Name = 'Bob')</span>;</p>
+            </div>
+            <button id="run-row" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mt-4 transition-colors">Run Query</button>
+            <div class="result-box text-center mt-4">
+                <p id="row-result">Click "Run Query" to see the result.</p>
+            </div>
+        </div>
+
+        <!-- Table Sub-query Section -->
+        <div class="card">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-400">3. Table Sub-query</h2>
+            <p class="text-gray-300">A table sub-query (or derived table) returns a complete table with multiple rows and columns. It's often used in the <code>FROM</code> clause and is treated as a temporary table for the outer query.</p>
+            <div class="table-container">
+                <p class="font-bold mb-2">Sample Tables: Employees and Salaries</p>
+                <table class="mb-4">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>Alice</td><td>Sales</td></tr>
+                        <tr><td>2</td><td>Bob</td><td>IT</td></tr>
+                        <tr><td>3</td><td>Charlie</td><td>Sales</td></tr>
+                        <tr><td>4</td><td>David</td><td>IT</td></tr>
+                    </tbody>
+                </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>EmployeeID</th>
+                            <th>MonthlySalary</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>6250</td></tr>
+                        <tr><td>2</td><td>7500</td></tr>
+                        <tr><td>3</td><td>6500</td></tr>
+                        <tr><td>4</td><td>7666</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="sql-code">
+                <p class="text-white">-- Calculate the total annual salary per department from a temporary table.</p>
+                <p>SELECT Department, SUM(AnnualSalary) as TotalAnnualSalary</p>
+                <p>FROM <span class="text-yellow-300">(SELECT E.Department, S.MonthlySalary * 12 as AnnualSalary FROM Employees E JOIN Salaries S ON E.ID = S.EmployeeID)</span> AS DepartmentSalaries</p>
+                <p>GROUP BY Department;</p>
+            </div>
+            <button id="run-table" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mt-4 transition-colors">Run Query</button>
+            <div class="result-box text-center mt-4">
+                <p id="table-result">Click "Run Query" to see the result.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const scalarBtn = document.getElementById('run-scalar');
+            const scalarResult = document.getElementById('scalar-result');
+
+            const rowBtn = document.getElementById('run-row');
+            const rowResult = document.getElementById('row-result');
+
+            const tableBtn = document.getElementById('run-table');
+            const tableResult = document.getElementById('table-result');
+
+            scalarBtn.addEventListener('click', () => {
+                scalarResult.innerHTML = `
+                    <p>The sub-query returns the scalar value: <span class="font-bold text-yellow-300">84000</span> (the average salary).</p>
+                    <p>The outer query then returns employees with a salary greater than this value:</p>
+                    <p class="font-bold mt-2 text-white">
+                        Bob (90000)<br>
+                        David (92000)<br>
+                        Eve (85000)
+                    </p>
+                `;
+            });
+
+            rowBtn.addEventListener('click', () => {
+                rowResult.innerHTML = `
+                    <p>The sub-query returns the single row: <span class="font-bold text-yellow-300">('Analyst', 'IT')</span>.</p>
+                    <p>The outer query then returns the employee that matches both values:</p>
+                    <p class="font-bold mt-2 text-white">Bob</p>
+                `;
+            });
+
+            tableBtn.addEventListener('click', () => {
+                tableResult.innerHTML = `
+                    <p>The sub-query returns a temporary table:</p>
+                    <table class="w-full text-sm my-2">
+                        <thead><tr><th>Department</th><th>AnnualSalary</th></tr></thead>
+                        <tbody>
+                            <tr><td>Sales</td><td>750000</td></tr>
+                            <tr><td>IT</td><td>900000</td></tr>
+                            <tr><td>Sales</td><td>780000</td></tr>
+                            <tr><td>IT</td><td>920000</td></tr>
+                        </tbody>
+                    </table>
+                    <p>The outer query then groups and sums the values from this temporary table:</p>
+                    <p class="font-bold mt-2 text-white">
+                        Sales: 1530000<br>
+                        IT: 1820000
+                    </p>
+                `;
+            });
+        });
+    </script>
+</body>
+</html>
