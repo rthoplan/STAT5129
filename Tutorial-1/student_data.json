@@ -1,0 +1,25 @@
+[
+  {
+    "student_id": 1,
+    "name": "Ayesha",
+    "grades": [
+      {"module": "STAT5129", "grade": "A"},
+      {"module": "STAT5205", "grade": "B+"}
+    ]
+  },
+  {
+    "student_id": 2,
+    "name": "Noah",
+    "grades": [
+      {"module": "STAT5129", "grade": "B"}
+    ]
+  },
+  {
+    "student_id": 3,
+    "name": "Kiara",
+    "grades": [
+      {"module": "STAT5129", "grade": "A-"},
+      {"module": "STAT5205", "grade": "A"}
+    ]
+  }
+]
